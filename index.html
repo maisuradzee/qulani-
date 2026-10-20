@@ -282,6 +282,10 @@ body.auth-view #accountMenuWrap { display:none !important; }
 .topbar .user-chip{min-height:44px}
 @media(max-width:760px){.topbar{align-items:center!important}.topbar .rightbar,.topbar .user-chip,.topbar .auth-actions{align-items:center!important}.topbar .user-chip{min-height:38px}}
 
+/* Qulani auth gate: hide the wallet until a real authenticated session exists. */
+body:not(.q-authenticated) .balance-luxe{display:none!important}
+body:not(.q-authenticated) .hero-row{grid-template-columns:minmax(0,1fr)!important}
+body.q-authenticated .balance-luxe{display:block!important}
 </style>
 <style>
 #logoutBtn{display:none;align-items:center;justify-content:center;width:48px;height:48px;padding:8px;border:1px solid #d9e2f0;border-radius:14px;background:#eef6ff;color:#17386b;cursor:pointer;flex:0 0 auto}#logoutBtn svg{width:30px;height:30px;display:block}#logoutBtn:hover{background:#dcecff}#logoutBtn:disabled{opacity:.6;cursor:wait}
@@ -1004,7 +1008,7 @@ function qUpdateBalanceCard(){const points=Math.max(0,Number(state.points)||0),i
 function qSetText(id,value){const el=document.getElementById(id);if(el)el.textContent=value;}
 function qSetValue(id,value){const el=document.getElementById(id);if(el)el.value=value;}
 function qSetHTML(id,value){const el=document.getElementById(id);if(el)el.innerHTML=value;}
-function renderAll(){const loggedIn=!!(window.qUser);const out=document.getElementById("loggedOutActions");const chip=document.getElementById("loggedInChip");if(out)out.style.display=loggedIn?"none":"flex";if(chip)chip.style.display=loggedIn?"flex":"none";const profileNav=document.getElementById("profileNavBtn");if(profileNav)profileNav.style.display=loggedIn?"grid":"none";const historyNav=document.getElementById("historyNavBtn");if(historyNav)historyNav.style.display=loggedIn?"grid":"none";qSetText("balancePoints",fmt(state.points));qUpdateBalanceCard();qSetText("headerPoints",fmt(state.points));qSetText("profilePoints",fmt(state.points));qSetText("completedCount",state.completed);qSetText("rewardCount",rewards.length-state.redeemed.length);qSetText("headerName",[state.profile.firstName,state.profile.lastName].filter(Boolean).join(" ")||"პროფილის შევსება");qSetValue("firstName",state.profile.firstName||"");qSetValue("lastName",state.profile.lastName||"");qSetValue("email",state.profile.email||"");qSetValue("phone",state.profile.phone||"");qSetHTML("homeTasks",[...tasks].sort((a,b)=>new Date(b.created_at||b.createdAt||b.created_on||0).getTime()-new Date(a.created_at||a.createdAt||a.created_on||0).getTime()).slice(0,2).map(taskCard).join(""));qSetHTML("allTasks",tasks.filter(t=>taskFilter==="all"||(taskFilter==="receipt"&&t.kind==="receipt")||(taskFilter==="survey"&&t.kind==="survey")||(taskFilter==="available"&&!state.submissions.some(s=>s.taskId===t.id&&s.status!=="rejected"))).map(taskCard).join("")||'<div class="empty">ამ ფილტრში დავალებები არ არის.</div>');qSetHTML("homeRewards",[...rewards].sort((a,b)=>new Date(b.created_at||b.createdAt||b.created_on||0).getTime()-new Date(a.created_at||a.createdAt||a.created_on||0).getTime()).slice(0,2).map(rewardCard).join(""));qSetHTML("allRewards",rewards.map(rewardCard).join(""));if(typeof qRenderPartnerCompanies==='function')qRenderPartnerCompanies();renderHistory();const logged=!!(typeof qUser!=="undefined"&&qUser);if(out)out.style.display=logged?"none":"flex";if(chip)chip.style.display=logged?"flex":"none";if(logged){qSetText("headerName",[state.profile.firstName,state.profile.lastName].filter(Boolean).join(" ")||"პროფილის შევსება");qSetText("headerPoints",window.qPointsVisible===false?"•••":fmt(state.points));}const eye=document.getElementById("togglePointsBtn");if(eye){eye.textContent=window.qPointsVisible===false?"◎":"◉";eye.title=window.qPointsVisible===false?"ქულების ჩვენება":"ქულების დამალვა";eye.setAttribute("aria-label",eye.title);}const logout=document.getElementById("logoutBtn");if(logout)logout.style.display="none";const mw=document.getElementById("accountMenuWrap");if(mw)mw.style.display="flex";if(!logged)closeAccountMenu();}
+function renderAll(){const loggedIn=!!(window.qUser);document.body.classList.toggle("q-authenticated",loggedIn);const out=document.getElementById("loggedOutActions");const chip=document.getElementById("loggedInChip");if(out)out.style.display=loggedIn?"none":"flex";if(chip)chip.style.display=loggedIn?"flex":"none";const profileNav=document.getElementById("profileNavBtn");if(profileNav)profileNav.style.display=loggedIn?"grid":"none";const historyNav=document.getElementById("historyNavBtn");if(historyNav)historyNav.style.display=loggedIn?"grid":"none";qSetText("balancePoints",fmt(state.points));qUpdateBalanceCard();qSetText("headerPoints",fmt(state.points));qSetText("profilePoints",fmt(state.points));qSetText("completedCount",state.completed);qSetText("rewardCount",rewards.length-state.redeemed.length);qSetText("headerName",[state.profile.firstName,state.profile.lastName].filter(Boolean).join(" ")||"პროფილის შევსება");qSetValue("firstName",state.profile.firstName||"");qSetValue("lastName",state.profile.lastName||"");qSetValue("email",state.profile.email||"");qSetValue("phone",state.profile.phone||"");qSetHTML("homeTasks",[...tasks].sort((a,b)=>new Date(b.created_at||b.createdAt||b.created_on||0).getTime()-new Date(a.created_at||a.createdAt||a.created_on||0).getTime()).slice(0,2).map(taskCard).join(""));qSetHTML("allTasks",tasks.filter(t=>taskFilter==="all"||(taskFilter==="receipt"&&t.kind==="receipt")||(taskFilter==="survey"&&t.kind==="survey")||(taskFilter==="available"&&!state.submissions.some(s=>s.taskId===t.id&&s.status!=="rejected"))).map(taskCard).join("")||'<div class="empty">ამ ფილტრში დავალებები არ არის.</div>');qSetHTML("homeRewards",[...rewards].sort((a,b)=>new Date(b.created_at||b.createdAt||b.created_on||0).getTime()-new Date(a.created_at||a.createdAt||a.created_on||0).getTime()).slice(0,2).map(rewardCard).join(""));qSetHTML("allRewards",rewards.map(rewardCard).join(""));if(typeof qRenderPartnerCompanies==='function')qRenderPartnerCompanies();renderHistory();const logged=!!(typeof qUser!=="undefined"&&qUser);if(out)out.style.display=logged?"none":"flex";if(chip)chip.style.display=logged?"flex":"none";if(logged){qSetText("headerName",[state.profile.firstName,state.profile.lastName].filter(Boolean).join(" ")||"პროფილის შევსება");qSetText("headerPoints",window.qPointsVisible===false?"•••":fmt(state.points));}const eye=document.getElementById("togglePointsBtn");if(eye){eye.textContent=window.qPointsVisible===false?"◎":"◉";eye.title=window.qPointsVisible===false?"ქულების ჩვენება":"ქულების დამალვა";eye.setAttribute("aria-label",eye.title);}const logout=document.getElementById("logoutBtn");if(logout)logout.style.display="none";const mw=document.getElementById("accountMenuWrap");if(mw)mw.style.display="flex";if(!logged)closeAccountMenu();}
 function filterTasks(f){taskFilter=f;document.querySelectorAll("#taskFilters .filter").forEach(b=>b.classList.toggle("active",b.dataset.filter===f));renderAll()}
 function openTask(id){const t=tasks.find(x=>x.id===id);if(!t)return;currentTaskId=id;document.getElementById("taskModalTitle").textContent=t.title;document.getElementById("taskModalSubtitle").textContent=`ჯილდო: ${t.points} ქულა`;document.getElementById("taskModalBody").innerHTML=`<p>${qEscapeHtml(t.detail||'').replace(/\n/g,'<br>')}</p><div class="notice">დემო რეჟიმი: ეს ფორმა დავალებას ბრაუზერის ისტორიაში დაამატებს. ქულები ავტომატურად არ ჩაირიცხება.</div><div class="field"><label for="taskNote">შენიშვნა / პასუხი</label><textarea id="taskNote" placeholder="${t.kind==="survey"?"ჩაწერე შენი პასუხი...":"აღწერე შესრულებული დავალება..."}"></textarea></div>${t.kind==="receipt"?'<div class="field"><label for="receiptFile">ქვითრის ფოტო (დემო)</label><input id="receiptFile" type="file" accept="image/*,.pdf"><small class="muted">ფაილი არ აიტვირთება სერვერზე — მხოლოდ ფორმის შესავსებადაა.</small></div>':''}`;document.getElementById("submitTaskBtn").disabled=false;openModal("taskModal")}
 function submitTask(){const t=tasks.find(x=>x.id===currentTaskId);if(!t)return;const note=document.getElementById("taskNote")?.value.trim()||"";const file=document.getElementById("receiptFile")?.files?.[0];if(t.kind==="receipt"&&!note&&!file){toast("გთხოვ, დაამატე შენიშვნა ან აირჩიე ქვითრის ფაილი.");return}state.submissions.unshift({id:Date.now(),taskId:t.id,title:t.title,points:t.points,note,status:"pending",date:new Date().toLocaleString("ka-GE")});saveState();closeModal("taskModal");showPage("history");toast("დავალება გაიგზავნა — სტატუსი: მოლოდინში")}
@@ -1225,7 +1229,7 @@ const QULANI_SUPABASE_URL = "https://qnqncedovahezxfnlueh.supabase.co";
 const QULANI_SUPABASE_KEY = "sb_publishable_qoneL15eWHCnuZTAjiJNKQ_guJAwuqH";
 let qClient = null, qUser = null, qDbTasks = [], qDbSubmissions = [];
 let qAdminStatus = 'unknown';
-let qCurrentUserBlocked = false;
+let qCurrentUserBlocked = false; window.qCurrentUserBlocked = false;
 // Session storage is used unless the user explicitly checks "დამახსოვრება".
 const QULANI_REMEMBER_KEY='qulani_remember_auth';
 const qulaniAuthStorage={
@@ -1416,7 +1420,7 @@ async function qCheckAdminStatus(showToast=false){
 async function qRefresh(){
  if(!qClient)return;
  const {data:{user},error:ue}=await qClient.auth.getUser(); if(ue)console.warn(ue); qUser=user||null;window.qUser=qUser;
- if(!qUser){qCurrentUserBlocked=false;qAdminStatus='signed_out';const tp=document.getElementById('adminTaskPanel');if(tp)tp.style.display='none';const adminNav=document.getElementById('adminNavBtn');if(adminNav)adminNav.style.display='none';const adminMenuItem=document.getElementById('accountAdminMenuItem');if(adminMenuItem)adminMenuItem.style.display='none';const ap=document.getElementById('adminStatusPanel');if(ap)ap.style.display='none';const av=document.getElementById('adminStatusValue');if(av)av.textContent='';state={...defaultState,points:0,completed:0,submissions:[],redeemed:[],profile:{firstName:'',lastName:'',email:'',phone:''}};try{const [tr,rr]=await Promise.all([qClient.from('tasks').select('id,slug,title,description,points,image_url,is_published,is_example,requires_receipt,created_at').eq('is_published',true).eq('is_example',false).order('created_at',{ascending:false}),qClient.from('rewards').select('id,title,description,points_required,image_url,is_published,created_at').eq('is_published',true).order('created_at',{ascending:false})]);if(!tr.error)tasks=(tr.data||[]).filter(t=>t.is_published&&!t.is_example).map(t=>({id:t.id,slug:t.slug,title:t.title,description:t.description||'',detail:t.description||'',points:Number(t.points)||0,kind:t.requires_receipt?'receipt':'survey',image_url:t.image_url||'',img:'survey',db:true}));if(!rr.error)rewards=(rr.data||[]).map(r=>({id:r.id,title:r.title,description:r.description||'',cost:Number(r.points_required)||0,image_url:r.image_url||'',img:'gift',db:true}));}catch(e){console.warn('Public task load failed:',e);}renderAll();return;}
+ if(!qUser){qCurrentUserBlocked=false;window.qCurrentUserBlocked=false;qAdminStatus='signed_out';const tp=document.getElementById('adminTaskPanel');if(tp)tp.style.display='none';const adminNav=document.getElementById('adminNavBtn');if(adminNav)adminNav.style.display='none';const adminMenuItem=document.getElementById('accountAdminMenuItem');if(adminMenuItem)adminMenuItem.style.display='none';const ap=document.getElementById('adminStatusPanel');if(ap)ap.style.display='none';const av=document.getElementById('adminStatusValue');if(av)av.textContent='';state={...defaultState,points:0,completed:0,submissions:[],redeemed:[],profile:{firstName:'',lastName:'',email:'',phone:''}};try{const [tr,rr]=await Promise.all([qClient.from('tasks').select('id,slug,title,description,points,image_url,is_published,is_example,requires_receipt,created_at').eq('is_published',true).eq('is_example',false).order('created_at',{ascending:false}),qClient.from('rewards').select('id,title,description,points_required,image_url,is_published,created_at').eq('is_published',true).order('created_at',{ascending:false})]);if(!tr.error)tasks=(tr.data||[]).filter(t=>t.is_published&&!t.is_example).map(t=>({id:t.id,slug:t.slug,title:t.title,description:t.description||'',detail:t.description||'',points:Number(t.points)||0,kind:t.requires_receipt?'receipt':'survey',image_url:t.image_url||'',img:'survey',db:true}));if(!rr.error)rewards=(rr.data||[]).map(r=>({id:r.id,title:r.title,description:r.description||'',cost:Number(r.points_required)||0,image_url:r.image_url||'',img:'gift',db:true}));}catch(e){console.warn('Public task load failed:',e);}renderAll();return;}
  await qCheckAdminStatus(false);
  // Update the header immediately after auth, even if a later database query fails.
  const meta=qUser.user_metadata||{};state.profile={...state.profile,firstName:meta.first_name||state.profile.firstName||'',lastName:meta.last_name||state.profile.lastName||'',email:qUser.email||state.profile.email||'',phone:meta.phone||state.profile.phone||''};renderAll();
@@ -1430,7 +1434,7 @@ async function qRefresh(){
    qClient.from('reward_redemptions').select('id,reward_id,reward_title,points_spent,status,created_at,fulfilled_at,fulfillment_note').eq('user_id',qUser.id).order('created_at',{ascending:false})
   ]);
   for(const [name,r] of [['profiles',pr],['tasks',tr],['submissions',sr],['points_ledger',lr],['rewards',rr],['reward_redemptions',dr]]) if(r.error) throw new Error(name+': '+r.error.message);
-  const p=pr.data||{}; qCurrentUserBlocked=!!p.is_blocked; if(qCurrentUserBlocked){toast('შენი ანგარიში დროებით დაბლოკილია. დაუკავშირდი ადმინისტრატორს.');} state.profile={firstName:p.first_name||meta.first_name||'',lastName:p.last_name||meta.last_name||'',email:p.email||qUser.email||'',phone:p.phone||meta.phone||''};
+  const p=pr.data||{}; qCurrentUserBlocked=!!p.is_blocked; window.qCurrentUserBlocked=qCurrentUserBlocked; if(qCurrentUserBlocked){toast('შენი ანგარიში დროებით დაბლოკილია. დაუკავშირდი ადმინისტრატორს.');} state.profile={firstName:p.first_name||meta.first_name||'',lastName:p.last_name||meta.last_name||'',email:p.email||qUser.email||'',phone:p.phone||meta.phone||''};
   qDbTasks=tr.data||[]; qDbSubmissions=sr.data||[];
   rewards=(rr.data||[]).map(r=>({id:r.id,title:r.title,description:r.description||'',cost:Number(r.points_required)||0,image_url:r.image_url||'',img:'gift',db:true}));
   {const old=tasks;tasks=qDbTasks.filter(t=>t.is_published&&!t.is_example).map((t,i)=>({id:t.id,slug:t.slug,title:t.title,description:t.description||'',detail:t.description||'',points:Number(t.points)||0,kind:t.requires_receipt?'receipt':'survey',image_url:t.image_url||'',img:(old.find(x=>String(x.slug||x.id)===String(t.slug))||old[i%Math.max(old.length,1)]||{}).img||'survey',db:true}));}
@@ -1824,8 +1828,10 @@ document.getElementById('adminRewardForm')?.addEventListener('submit',async func
  if(!title||!description||!Number.isInteger(cost)||cost<1){toast('შეავსე დასახელება, აღწერა და სწორი ქულების რაოდენობა.');return;}
  
  btn.disabled=true;btn.textContent='ემატება…';msg.style.display='none';
+ let rewardStep='ფოტოს ატვირთვა';
  try{
   image_url=await qUploadAdminImage(imageFile,'rewards');
+  rewardStep='საჩუქრის მონაცემების შენახვა';
   const {error}=await qClient.from('rewards').insert({title,description,points_required:cost,image_url,is_published});
   if(error)throw error;
   if(is_published)await qNotifyUsersOfPublishedUpdate('🎁 ახალი საჩუქარი დაემატა!',`Qulani-ზე გამოქვეყნდა ახალი საჩუქარი: ${title}`);
@@ -1834,7 +1840,8 @@ document.getElementById('adminRewardForm')?.addEventListener('submit',async func
   await qRefresh();await qLoadAdminRewards();toast('საჩუქარი წარმატებით დაემატა.');
  }catch(err){
   let reason=err.message||'უცნობი შეცდომა';
-  if(/row-level security|permission denied|not allowed/i.test(reason))reason+=' — Supabase-ში rewards ცხრილის RLS პოლიტიკები უნდა აძლევდეს წვდომას გამოქვეყნებული საჩუქრების წაკითხვაზე და მხოლოდ ადმინისტრატორს დამატება/მართვაზე.';
+  if(/failed to fetch|networkerror|load failed|fetch failed/i.test(reason))reason=`${rewardStep}: სერვერთან კავშირი ვერ შედგა (Failed to fetch). შეამოწმე Supabase-ის კავშირი და Storage-ის/ცხრილის ხელმისაწვდომობა.`;
+  else if(/row-level security|permission denied|not allowed/i.test(reason))reason+=` — ეტაპი: ${rewardStep}. Supabase-ში შესაბამისი Storage ან rewards ცხრილის RLS პოლიტიკა ამ მოქმედებას არ უშვებს.`;
   msg.className='notice';msg.style.display='block';msg.textContent='❌ საჩუქარი ვერ დაემატა: '+reason;
  }finally{btn.disabled=false;btn.textContent='საჩუქრის დამატება';}
 });
@@ -1930,7 +1937,7 @@ async function qSignOut(){
  const btn=document.getElementById('logoutBtn');if(btn){btn.disabled=true;btn.title='ანგარიშიდან გამოსვლა მიმდინარეობს…';btn.setAttribute('aria-label',btn.title);}
  try{
   const {error}=await qClient.auth.signOut();if(error)throw error;
-  qUser=null;window.qUser=null;
+  qUser=null;window.qUser=null;qCurrentUserBlocked=false;window.qCurrentUserBlocked=false;
   state={...defaultState,points:0,completed:0,submissions:[],redeemed:[],profile:{firstName:'',lastName:'',email:'',phone:''}};
   qDbTasks=[];qDbSubmissions=[];renderAll();showPage('home');toast('ანგარიშიდან გამოხვედი.');
  }catch(e){toast('ანგარიშიდან გამოსვლა ვერ მოხერხდა: '+(e.message||'უცნობი შეცდომა'));}
@@ -2462,5 +2469,90 @@ if(requiredProfileForm)requiredProfileForm.addEventListener('submit',async funct
 })();
 </script>
 
+
+<style id="q-left-side-task-hit-fix">
+/* Mobile tap fix: keep task/reward grids and their actions above decorative layers. */
+#homeTasks, #allTasks, #homeRewards, #allRewards,
+.home-catalog-grid .task-grid, .home-catalog-grid .reward-grid {
+  position: relative !important;
+  isolation: isolate;
+}
+#homeTasks .task-card, #allTasks .task-card,
+#homeRewards .reward-card, #allRewards .reward-card {
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+}
+#homeTasks .task-card button, #allTasks .task-card button,
+#homeRewards .reward-card button, #allRewards .reward-card button {
+  position: relative !important;
+  z-index: 5 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+#homeTasks .task-image, #allTasks .task-image,
+#homeRewards .reward-art, #allRewards .reward-art,
+#homeTasks .task-image img, #allTasks .task-image img,
+#homeRewards .reward-art img, #allRewards .reward-art img,
+.task-card::before, .task-card::after, .reward-card::before, .reward-card::after {
+  pointer-events: none !important;
+}
+</style>
+<script id="q-left-side-task-hit-fix-js">
+(function(){
+  /* If a transparent/ornamental layer intercepts a phone tap, forward it only
+     when the exact tapped point is over a visible task/reward action beneath it. */
+  let forwarding = false;
+  document.addEventListener('click', function(e){
+    if (forwarding || !e.isTrusted || typeof document.elementsFromPoint !== 'function') return;
+    const stack = document.elementsFromPoint(e.clientX, e.clientY);
+    if (!stack || !stack.length) return;
+    const top = stack[0];
+    const actionable = stack.find(function(el){
+      return el && el.matches && el.matches('#homeTasks .task-card button[onclick*="openTask"], #allTasks .task-card button[onclick*="openTask"], #homeRewards .reward-card button[onclick*="openReward"], #allRewards .reward-card button[onclick*="openReward"]');
+    });
+    if (!actionable || top === actionable || actionable.contains(top) || top.contains(actionable)) return;
+    if (actionable.disabled || actionable.getAttribute('aria-disabled') === 'true') return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    forwarding = true;
+    try { actionable.click(); } finally { forwarding = false; }
+  }, true);
+})();
+</script>
+
+<div id="qBlockedAccountOverlay" role="alertdialog" aria-modal="true" aria-labelledby="qBlockedTitle" style="display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,18,32,.96);color:#fff;align-items:center;justify-content:center;padding:24px;text-align:center;">
+  <div style="max-width:440px;width:100%;background:#172235;border:1px solid #46536a;border-radius:22px;padding:28px 22px;box-shadow:0 24px 80px rgba(0,0,0,.4)">
+    <div style="font-size:42px;margin-bottom:12px" aria-hidden="true">🔒</div>
+    <h2 id="qBlockedTitle" style="margin:0 0 12px;font-size:24px">ანგარიში დაბლოკილია</h2>
+    <p style="line-height:1.7;color:#d5deeb;margin:0 0 20px">შეგიძლია შეხვიდე ანგარიშში, თუმცა საიტის ფუნქციებით სარგებლობა დროებით შეზღუდულია. დახმარებისთვის დაუკავშირდი ადმინისტრატორს.</p>
+    <button type="button" id="qBlockedLogoutBtn" style="border:0;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer;background:#fff;color:#172235">ანგარიშიდან გამოსვლა</button>
+  </div>
+</div>
+<script>
+(function(){
+  function qApplyBlockedLock(){
+    var overlay=document.getElementById('qBlockedAccountOverlay');
+    if(!overlay)return;
+    var blocked=!!window.qUser && !!window.qCurrentUserBlocked;
+    overlay.style.display=blocked?'flex':'none';
+    document.documentElement.classList.toggle('q-account-blocked',blocked);
+    document.body.style.overflow=blocked?'hidden':'';
+  }
+  window.qApplyBlockedLock=qApplyBlockedLock;
+  document.addEventListener('click',function(e){
+    if(e.target&&e.target.closest&&e.target.closest('#qBlockedLogoutBtn')){e.preventDefault();e.stopImmediatePropagation();if(typeof window.qSignOut==='function')window.qSignOut();return;}
+    if(window.qUser&&window.qCurrentUserBlocked){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();}
+  },true);
+  document.addEventListener('submit',function(e){if(window.qUser&&window.qCurrentUserBlocked){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();}},true);
+  document.addEventListener('change',function(e){if(window.qUser&&window.qCurrentUserBlocked){e.preventDefault();e.stopImmediatePropagation();}},true);
+  var oldRefresh=window.qRefresh;
+  if(typeof oldRefresh==='function'){
+    window.qRefresh=async function(){await oldRefresh.apply(this,arguments);qApplyBlockedLock();};
+  }
+  document.addEventListener('DOMContentLoaded',qApplyBlockedLock);
+  setInterval(qApplyBlockedLock,500);
+})();
+</script>
 </body>
 </html>
