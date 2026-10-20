@@ -741,6 +741,7 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
       <button type="button" id="accountAdminMenuItem" role="menuitem" onclick="accountMenuGo('admin')" style="display:none"><span class="menu-icon">⚙</span>ადმინისტრატორი</button>
       <button type="button" role="menuitem" onclick="accountMenuGo('partners')"><span class="menu-icon">🤝</span>პარტნიორები</button>
       <button type="button" role="menuitem" onclick="accountMenuGo('news')"><span class="menu-icon">📰</span>სიახლეები</button>
+      <button type="button" role="menuitem" onclick="accountMenuGo('site-feedback')"><span class="menu-icon">✉</span>საიტის შეფასება</button>
       <button type="button" role="menuitem" onclick="q22OpenSaved();toggleAccountMenu(event)"><span class="menu-icon">♡</span>შენახულები <span id="q22SavedCountTop" class="q-unread-count" style="position:static;margin-left:auto">0</span></button>
       <button type="button" role="menuitem" onclick="accountMenuLogout()"><span class="menu-icon"><svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true"><path d="M18 4H8.5C7.12 4 6 5.12 6 6.5v19C6 26.88 7.12 28 8.5 28H18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M15 16h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>ანგარიშიდან გასვლა</button>
       <div id="siteColorPickerBox" aria-label="საიტის ფონის ფერი">
@@ -1018,6 +1019,9 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
       </section>
       <hr style="border:0;border-top:1px solid #e4eaf3;margin:20px 0">
       <section class="admin-submissions-box" aria-labelledby="adminSubmissionsHeading"><div class="admin-submissions-head"><div><h3 id="adminSubmissionsHeading">გამოგზავნილი დავალებები</h3><p class="muted">აქ გამოჩნდება მომხმარებლების გაგზავნილი დავალებები. ქვითრის ფოტო ხელმისაწვდომია, როცა ფაილი ატვირთულია და receipts bucket-ზე წვდომა სწორადაა დაყენებული.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="secondary-btn" onclick="showPage('archive');qLoadAdminArchive()">არქივი</button><button type="button" class="secondary-btn" onclick="qLoadAdminSubmissions()">გაგზავნილების განახლება</button></div></div><div id="adminSubmissionList" class="history-list" style="margin-top:12px"></div><div id="adminSubmissionPagination" class="admin-pagination" aria-label="გაგზავნილი დავალებების გვერდები" style="display:none"></div></section>
+
+      <hr style="border:0;border-top:1px solid #e4eaf3;margin:20px 0">
+      <section class="admin-submissions-box" aria-labelledby="qAdminFeedbackHeading"><div class="admin-submissions-head"><div><h3 id="qAdminFeedbackHeading">Inbox-ის მართვა</h3><p class="muted">მომხმარებლების საიტის შეფასებები და შეთავაზებები.</p></div><button type="button" class="secondary-btn" onclick="qLoadSiteFeedback(true)">Inbox-ის განახლება</button></div><div id="qAdminFeedbackList" class="history-list" style="margin-top:12px"><div class="muted">შეფასებები ჩაიტვირთება ადმინისტრატორის განყოფილების გახსნისას.</div></div></section>
       
     </div>
   </section>
@@ -1034,6 +1038,20 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
   <section id="page-news" class="page-view">
     <div class="panel"><div class="section-head"><div><h2>📰 სიახლეები</h2><p class="muted">ქულანის სიახლეები, განცხადებები და ახალი შესაძლებლობები.</p></div></div><div id="publicNewsList" class="history-list"><div class="empty">სიახლეები იტვირთება…</div></div></div>
   <div class="page-help-footer"><a href="#" onclick="showPage(\'help\');return false;">როგორ მუშაობს ქულანი?</a></div></section>
+
+  <section id="page-site-feedback" class="page-view">
+    <div class="panel q-feedback-panel" style="max-width:760px;margin:24px auto;padding:clamp(20px,4vw,34px)">
+      <button type="button" class="secondary-btn" onclick="showPage('home')" style="width:auto;margin-bottom:18px">← მთავარზე დაბრუნება</button>
+      <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9a8355;font-weight:800">QULANI · FEEDBACK</div>
+      <h2 style="margin:8px 0 10px">საიტის შეფასება</h2>
+      <p class="muted" style="margin-bottom:20px">რას შეცვლიდით/გააუმჯობესებდით?</p>
+      <form id="qSiteFeedbackForm" onsubmit="qSubmitSiteFeedback(event);return false">
+        <div class="field"><label for="qSiteFeedbackMessage">შენი იდეა ან შენიშვნა</label><textarea id="qSiteFeedbackMessage" rows="6" maxlength="3000" required placeholder="მოგვწერე, რა გავაუმჯობესოთ Qulani-ზე…"></textarea><small class="muted">მაქსიმუმ 3000 სიმბოლო.</small></div>
+        <button type="submit" class="blue-btn" id="qSiteFeedbackSubmit" style="width:100%;margin-top:12px">შეტყობინების გაგზავნა →</button>
+        <div id="qSiteFeedbackMessageBox" class="notice" style="display:none;margin-top:14px" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
 
   <section id="page-help" class="page-view">
     <div class="panel"><h2>როგორ მუშაობს ქულანი?</h2>
@@ -1114,7 +1132,46 @@ function renderProgress(){
  else hint.textContent='სვეტზე შეხებისას გამოჩნდება კონკრეტული დღის თარიღი და ქულების ცვლილება. დადებითი სვეტები ქულების მატებას, ნარინჯისფერი კი კლებას აჩვენებს.';
 }
 
-function showPage(name){if(String(name).toLowerCase()==="notifications"){qLoadUserNotifications();}if(String(name).toLowerCase()==="news"){qLoadPublicNews();}document.body.classList.toggle("auth-view", /login|signin|signup|register|auth/i.test(String(name)));if((name==="profile"||name==="history")&&!qUser){toast("პროფილისა და ისტორიის სანახავად ჯერ გაიარე ავტორიზაცია.");openAuth("signin");return;}document.querySelectorAll(".page-view").forEach(x=>x.classList.remove("active"));const target=document.getElementById("page-"+name);if(target)target.classList.add("active");document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===name));if(name==="history")renderHistory();if(name==="progress")renderProgress();if(name==="admin"){if(qAdminStatus!=="admin"){toast("ადმინისტრატორის წვდომა არ გაქვს.");showPage("home");return;}qLoadAdminStats();qLoadAdminTasks();qLoadAdminSubmissions();qLoadAdminRewards();qLoadAdminUsers();qLoadAdminPartners();qLoadAdminNews();}window.scrollTo({top:0,behavior:"smooth"})}
+async function qSubmitSiteFeedback(event){
+ if(event)event.preventDefault();
+ const form=document.getElementById('qSiteFeedbackForm'),input=document.getElementById('qSiteFeedbackMessage'),btn=document.getElementById('qSiteFeedbackSubmit'),box=document.getElementById('qSiteFeedbackMessageBox');
+ const message=(input?.value||'').trim();
+ if(!qUser){toast('შეფასების გასაგზავნად ჯერ შედი ანგარიშში.');openAuth('signin');return;}
+ if(message.length<3){if(box){box.style.display='block';box.textContent='გთხოვ, მინიმუმ 3 სიმბოლო ჩაწერე.';}return;}
+ if(!qClient){if(box){box.style.display='block';box.textContent='სერვერთან კავშირი ვერ მოიძებნა. სცადე თავიდან.';}return;}
+ if(btn){btn.disabled=true;btn.textContent='იგზავნება…';}
+ if(box){box.style.display='none';box.textContent='';}
+ try{
+  const profile=state?.profile||{};
+  const {error}=await qClient.from('site_feedback').insert({user_id:qUser.id,message:message});
+  if(error)throw error;
+  if(input)input.value='';
+  if(box){box.style.display='block';box.textContent='მადლობა! შენი შეფასება გაიგზავნა ადმინისტრატორთან.';box.className='notice';}
+  toast('შეფასება გაიგზავნა. მადლობა!');
+ }catch(e){
+  if(box){box.style.display='block';box.className='notice';box.textContent='შეფასება ვერ გაიგზავნა: '+(e.message||'უცნობი შეცდომა')+'. შეამოწმე Supabase-ში site_feedback SQL ცხრილი და პოლიტიკები.';}
+ }finally{if(btn){btn.disabled=false;btn.textContent='შეტყობინების გაგზავნა →';}}
+}
+let qSiteFeedbackRows=[];
+async function qLoadSiteFeedback(showToastMessage=false){
+ const list=document.getElementById('qAdminFeedbackList');if(!list||qAdminStatus!=='admin'||!qClient||!qUser)return;
+ list.innerHTML='<div class="muted">Inbox იტვირთება…</div>';
+ try{
+  const {data,error}=await qClient.from('site_feedback').select('id,user_id,message,status,created_at').order('created_at',{ascending:false}).limit(200);
+  if(error)throw error;
+  qSiteFeedbackRows=data||[];
+  const ids=[...new Set(qSiteFeedbackRows.map(x=>x.user_id).filter(Boolean))];let profiles={};
+  if(ids.length){const pr=await qClient.from('profiles').select('id,first_name,last_name,email').in('id',ids);if(pr.error)throw pr.error;for(const x of(pr.data||[]))profiles[String(x.id)]=x;}
+  if(!qSiteFeedbackRows.length){list.innerHTML='<div class="empty">შეფასებები ჯერ არ არის.</div>';return;}
+  list.innerHTML=qSiteFeedbackRows.map(r=>{const pr=profiles[String(r.user_id)]||{};const name=[pr.first_name,pr.last_name].filter(Boolean).join(' ')||pr.email||'მომხმარებელი';const isRead=r.status==='read';return `<div class="history-item" style="align-items:flex-start"><div style="min-width:0;flex:1"><strong>${qEscapeHtml(name)}</strong><div class="muted">${qEscapeHtml(pr.email||'')} · ID: ${qEscapeHtml(r.user_id||'')} · ${r.created_at?new Date(r.created_at).toLocaleString('ka-GE'):'—'}</div><p style="white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0">${qEscapeHtml(r.message||'')}</p><div class="muted">სტატუსი: ${isRead?'წაკითხულია':'ახალია'}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${!isRead?`<button type="button" class="secondary-btn" style="width:auto" onclick="qSetSiteFeedbackStatus('${qEscapeHtml(r.id)}','read')">წაკითხულად მონიშვნა</button>`:''}<button type="button" class="danger-btn" onclick="qDeleteSiteFeedback('${qEscapeHtml(r.id)}')">წაშლა</button></div></div></div>`}).join('');
+  if(showToastMessage)toast('Inbox განახლდა.');
+ }catch(e){list.innerHTML='<div class="notice">Inbox ვერ ჩაიტვირთა: '+qEscapeHtml(e.message||'უცნობი შეცდომა')+'. გადაამოწმე SQL ცხრილი site_feedback და Supabase RLS პოლიტიკები.</div>';}
+}
+async function qSetSiteFeedbackStatus(id,status){if(qAdminStatus!=='admin'||!qClient)return;try{const {error}=await qClient.from('site_feedback').update({status}).eq('id',id);if(error)throw error;await qLoadSiteFeedback(false);}catch(e){toast('სტატუსის შეცვლა ვერ მოხერხდა: '+(e.message||'უცნობი შეცდომა'));}}
+async function qDeleteSiteFeedback(id){if(qAdminStatus!=='admin'||!qClient)return;if(!confirm('ნამდვილად გინდა ამ შეფასების წაშლა?'))return;try{const {error}=await qClient.from('site_feedback').delete().eq('id',id);if(error)throw error;await qLoadSiteFeedback(false);toast('შეფასება წაიშალა.');}catch(e){toast('შეფასების წაშლა ვერ მოხერხდა: '+(e.message||'უცნობი შეცდომა'));}}
+window.qSubmitSiteFeedback=qSubmitSiteFeedback;window.qLoadSiteFeedback=qLoadSiteFeedback;window.qSetSiteFeedbackStatus=qSetSiteFeedbackStatus;window.qDeleteSiteFeedback=qDeleteSiteFeedback;
+
+function showPage(name){if(String(name).toLowerCase()==="site-feedback"&&!qUser){toast("შეფასების გასაგზავნად ჯერ შედი ანგარიშში.");openAuth("signin");return;}if(String(name).toLowerCase()==="site-feedback"){const f=document.getElementById("qSiteFeedbackMessageBox");if(f){f.style.display="none";f.textContent="";}}if(String(name).toLowerCase()==="notifications"){qLoadUserNotifications();}if(String(name).toLowerCase()==="news"){qLoadPublicNews();}document.body.classList.toggle("auth-view", /login|signin|signup|register|auth/i.test(String(name)));if((name==="profile"||name==="history")&&!qUser){toast("პროფილისა და ისტორიის სანახავად ჯერ გაიარე ავტორიზაცია.");openAuth("signin");return;}document.querySelectorAll(".page-view").forEach(x=>x.classList.remove("active"));const target=document.getElementById("page-"+name);if(target)target.classList.add("active");document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===name));if(name==="history")renderHistory();if(name==="progress")renderProgress();if(name==="admin"){if(qAdminStatus!=="admin"){toast("ადმინისტრატორის წვდომა არ გაქვს.");showPage("home");return;}qLoadAdminStats();qLoadAdminTasks();qLoadAdminSubmissions();qLoadAdminRewards();qLoadAdminUsers();qLoadAdminPartners();qLoadAdminNews();qLoadSiteFeedback(false);}window.scrollTo({top:0,behavior:"smooth"})}
 function taskCard(t){const sent=state.submissions.some(s=>String(s.taskId)===String(t.id)&&s.status!=="rejected");const art=t.image_url?`<img src="${qEscapeHtml(t.image_url)}" alt="">`:`<img src="${ASSETS[t.img]||ASSETS.survey}" alt="">`;const pts=Math.max(0,Number(t.points)||0);const tier=pts>1000?'points-tier-red':pts>500?'points-tier-gold':pts>100?'points-tier-green':'points-tier-blue';return `<article class="task-card"><div class="task-image">${art}<span class="points-badge ${tier}">${fmt(pts)} ქულა</span></div><div class="task-content"><h3>${qEscapeHtml(t.title)}</h3><p>${qEscapeHtml(t.description)}</p><button class="blue-btn" ${sent?"disabled":""} onclick="openTask('${t.id}')">${sent?"გაგზავნილია ✓":"დაწყება　➜"}</button></div></article>`}
 function rewardCard(r){const redeemed=state.redeemed.some(x=>String(x.rewardId)===String(r.id));const image=String(r.image_url||ASSETS[r.img]||ASSETS.gift||'');return `<article class="reward-card"><div class="reward-art"><img src="${qEscapeHtml(image)}" alt=""></div><div class="reward-info"><h3>${qEscapeHtml(r.title||'საჩუქარი')}</h3><p>${qEscapeHtml(r.description||'')}</p><div class="reward-cost"><span class="coin">♛</span>${fmt(r.cost)} <small>ქულა</small></div><button class="blue-btn" ${redeemed?"disabled":""} onclick="openReward('${qEscapeHtml(String(r.id))}')">${redeemed?"გაცვლილია ✓":"მიღება"}</button></div></article>`}
 let qBalanceVisible=true;
