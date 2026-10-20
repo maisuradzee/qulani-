@@ -695,6 +695,35 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
 #authSubmitButton:focus-visible { outline: 3px solid #f4c84a; outline-offset: 3px; }
 #authModal .auth-error { position: relative; z-index: 2; }
 </style>
+
+<style id="qulani-home-search-and-remove-floating-menu-v76">
+/* Remove the bottom-right quick menu completely; its overlays remain available from the top menu/search. */
+.q22-envelope-dock,.q22-floating-tools{display:none!important;pointer-events:none!important}
+.q-home-search{position:relative;display:flex;align-items:center;gap:10px;margin:16px 0 20px;padding:9px 10px 9px 15px;border:1px solid #dbe6f3;border-radius:18px;background:linear-gradient(135deg,#fff,#f4f8ff);box-shadow:0 9px 24px rgba(18,54,100,.08);z-index:15}
+.q-home-search-icon{font-size:29px;line-height:1;color:#0875ed;flex-shrink:0}
+.q-home-search input{min-width:0;flex:1;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;padding:10px 2px!important;font-size:15px;color:#173052}
+.q-home-search button{border:0;border-radius:12px;padding:11px 16px;background:linear-gradient(135deg,#0875ed,#1657c0);color:#fff;font-weight:800;box-shadow:0 5px 12px #0875ed35}
+.q-home-search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;max-height:52vh;overflow:auto;background:#fff;border:1px solid #dce6f2;border-radius:16px;box-shadow:0 16px 38px rgba(12,35,70,.18);padding:7px;z-index:1000}
+.q-home-search-results[hidden]{display:none!important}
+.q-home-search-result{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:0;border-radius:10px;background:#fff;color:#173052;text-align:left;min-height:44px}
+.q-home-search-result:hover{background:#f1f6ff}.q-home-search-result strong{flex:1;min-width:0;overflow-wrap:anywhere}.q-home-search-result-kind{font-size:11px;color:#0875ed;background:#eaf3ff;padding:5px 7px;border-radius:8px;white-space:nowrap}.q-home-search-result>span:last-child{font-size:12px;color:#0875ed;white-space:nowrap}.q-home-search-empty{padding:16px;color:#718096;text-align:center}
+@media(max-width:760px){.q-home-search{margin:12px 0 16px;padding:8px 9px 8px 12px;gap:7px;border-radius:15px}.q-home-search-icon{font-size:25px}.q-home-search input{font-size:13px}.q-home-search button{padding:10px 12px;font-size:12px}.q-home-search-results{max-height:45vh}}
+</style>
+
+
+<style id="qulani-registration-full-page-v77">
+/* Registration is a dedicated full-screen page, not a centered popup. */
+#authModal.signup-page-mode{display:block!important;position:fixed;inset:0;z-index:300000!important;overflow-y:auto;overflow-x:hidden;background:linear-gradient(160deg,#edf4ff 0%,#f8fafc 52%,#fff7df 100%);padding:0;}
+#authModal.signup-page-mode>.modal{width:100%;max-width:680px;min-height:100dvh;max-height:none;overflow:visible;margin:0 auto;padding:clamp(20px,5vw,36px);border-radius:0;background:transparent;box-shadow:none;box-sizing:border-box;}
+#authModal.signup-page-mode .modal-head{align-items:center;padding:8px 0 18px;border-bottom:1px solid #dce5f2;}
+#authModal.signup-page-mode .modal-head h2{font-size:clamp(28px,6vw,36px);font-weight:900;color:#142b4c;}
+#authModal.signup-page-mode .modal-body{max-width:520px;margin:26px auto 0;background:#fff;border:1px solid #e2eaf5;border-radius:24px;padding:clamp(18px,4vw,28px);box-shadow:0 18px 48px #17345a16;}
+#authModal.signup-page-mode .modal-foot{max-width:520px;margin:16px auto 32px;}
+#authModal.signup-page-mode #authSubmitButton{min-height:54px;border:0;border-radius:16px;background:linear-gradient(135deg,#0875ed,#1744a0);color:white;font-weight:900;font-size:17px;box-shadow:0 9px 22px #0875ed35;}
+#authModal.signup-page-mode #authSubmitButton:active{transform:scale(.985);}
+#authModal.signup-page-mode .close{width:44px;height:44px;background:#e5edf8;border:1px solid #d4e0f0;}
+</style>
+
 </head>
 <body>
 <header class="topbar">
@@ -705,6 +734,7 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
       <button type="button" role="menuitem" onclick="accountMenuGo('partners')"><span class="menu-icon">🤝</span>პარტნიორები</button>
       <button type="button" id="userNotificationsMenuItem" role="menuitem" onclick="accountMenuGo('notifications')"><span class="menu-icon" style="position:relative">🔔<span id="qUnreadMenuFlag" class="q-unread-flag" aria-hidden="true" style="top:-8px;right:-9px">🚩</span></span>შეტყობინებები<span id="qUnreadMenuCount" class="q-unread-count" style="position:static;margin-left:auto">0</span></button>
       <button type="button" role="menuitem" onclick="accountMenuGo('news')"><span class="menu-icon">📰</span>სიახლეები</button>
+      <button type="button" role="menuitem" onclick="q22OpenSaved();toggleAccountMenu(event)"><span class="menu-icon">♡</span>შენახულები <span id="q22SavedCountTop" class="q-unread-count" style="position:static;margin-left:auto">0</span></button>
       <button type="button" role="menuitem" onclick="accountMenuLogout()"><span class="menu-icon"><svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true"><path d="M18 4H8.5C7.12 4 6 5.12 6 6.5v19C6 26.88 7.12 28 8.5 28H18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M15 16h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>ანგარიშიდან გასვლა</button>
       <div id="siteColorPickerBox" aria-label="საიტის ფონის ფერი">
         <div class="site-color-title">ფონის ფერი</div>
@@ -771,6 +801,13 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
         <button type="button" class="balance-progress-link" onclick="showPage('progress')">ჩემი პროგრესი <span>გახსნა　→</span></button>
       </aside>
     </div>
+
+    <section class="q-home-search" aria-label="საიტზე ძიება">
+      <div class="q-home-search-icon" aria-hidden="true">⌕</div>
+      <input id="qHomeSearchInput" type="search" placeholder="მოძებნე დავალების ან საჩუქრის სათაური…" autocomplete="off" oninput="q22RenderHomeSearch(this.value)" aria-label="საიტზე სათაურების ძიება">
+      <button type="button" onclick="q22RenderHomeSearch(document.getElementById('qHomeSearchInput').value);document.getElementById('qHomeSearchInput').focus()" aria-label="ძიება">ძიება</button>
+      <div id="qHomeSearchResults" class="q-home-search-results" hidden></div>
+    </section>
 
     <section class="how-it-works" aria-labelledby="howItWorksTitle">
       <div class="how-head">
@@ -1085,10 +1122,13 @@ function openReward(id){if(!qRequireLogin())return;const accountCheck=qRewardAcc
 async function redeemReward(){const r=rewards.find(x=>String(x.id)===String(currentRewardId));if(!r)return;if(!qRequireLogin())return;const accountCheck=qRewardAccountCheck();if(!accountCheck.ok){closeModal("rewardModal");toast(accountCheck.message);if(typeof showPage==='function')showPage('profile');return;}if(!r.db){toast("ეს საჩუქარი ჯერ მონაცემთა ბაზაში არ არის.");return}if(state.points<r.cost){toast("ქულები საკმარისი არ არის.");return}const btn=document.getElementById("redeemBtn");if(btn){btn.disabled=true;btn.textContent="იგზავნება…"}try{const {error}=await qClient.rpc("redeem_reward",{p_reward_id:r.id});if(error)throw error;await qRefresh();closeModal("rewardModal");showPage("history");toast("საჩუქრის მოთხოვნა გაიგზავნა. ქულები ჩამოგეჭრა; ადმინისტრატორი დაამუშავებს მოთხოვნას.");}catch(e){toast("საჩუქრის გაცვლა ვერ მოხერხდა: "+(e.message||"უცნობი შეცდომა"));}finally{if(btn){btn.disabled=false;btn.textContent="ქულების გაცვლა"}}}
 function renderHistory(){const el=document.getElementById("historyList");if(!el)return;const rows=[...state.submissions.map(s=>({...s,type:"task"})),...state.redeemed.map(r=>({...r,type:"reward",date:r.date}))].sort((a,b)=>b.id-a.id);el.innerHTML=rows.length?rows.map(x=>`<div class="history-item"><div><strong>${x.title}</strong><div class="muted">${x.date||""}${x.type==="task"&&x.points?` · ${x.points} ქულა`:""}</div></div><div><span class="status ${x.status}">${x.type==="reward"?(x.status==="fulfilled"?"გაცემულია":x.status==="cancelled"?"გაუქმებულია":"მოლოდინში"):x.status==="pending"?"მოლოდინში":x.status==="approved"?"დამტკიცებულია":"უარყოფილია"}</span>${x.type==="task"&&x.status==="pending"?`<div style="margin-top:8px"><button class="secondary-btn" onclick="demoReview(${x.id},'approved')">დემო დამტკიცება</button> <button class="secondary-btn" onclick="demoReview(${x.id},'rejected')">უარყოფა</button></div>`:""}</div></div>`).join(""):'<div class="empty">ჯერ არაფერი გაგიგზავნია. აირჩიე დავალება და აქ გამოჩნდება მისი სტატუსი.</div>'}
 function demoReview(id,status){const s=state.submissions.find(x=>x.id===id);if(!s||s.status!=="pending")return;s.status=status;if(status==="approved"){state.points+=s.points;state.completed+=1;toast(`დემო დამტკიცდა — დაემატა ${s.points} ქულა.`)}else toast("დემო დავალება უარყოფილია.");saveState()}
-function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden"}function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow=""}
+function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden"}function closeModal(id){document.getElementById(id).classList.remove("open");if(id==="authModal"){document.getElementById("authModal")?.classList.remove("signup-page-mode");if(location.hash==="#register"){history.replaceState({},document.title,location.pathname+location.search);}}document.body.style.overflow=""}
 document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)closeModal(o.id)}));document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".overlay.open").forEach(o=>closeModal(o.id))});
 function openAuth(mode="signin"){
  window.qAuthMode = mode === "signup" ? "signup" : "signin";
+ const authRoot=document.getElementById("authModal");
+ if(authRoot){authRoot.classList.toggle("signup-page-mode",window.qAuthMode==="signup");}
+ if(window.qAuthMode==="signup"){history.replaceState({},document.title,location.pathname+location.search+"#register");}else if(location.hash==="#register"){history.replaceState({},document.title,location.pathname+location.search);}
  const submitButton=document.getElementById("authSubmitButton"); if(submitButton) submitButton.textContent=window.qAuthMode==="signup"?"რეგისტრაცია":"შესვლა";
  const title=document.getElementById("authTitle"); const signup=mode==="signup";
  if(title) title.textContent=signup?"რეგისტრაცია":"ავტორიზაცია";
@@ -2308,7 +2348,7 @@ redeemReward = async function(){
  const persist=()=>{try{localStorage.setItem(STORE,JSON.stringify(saved))}catch(e){if(typeof toast==='function')toast('შენახვა ვერ მოხერხდა ამ ბრაუზერში.')}};
  const list=type=>type==='task'?(Array.isArray(tasks)?tasks:[]):(Array.isArray(rewards)?rewards:[]);
  const isSaved=(type,id)=>(type==='task'?saved.tasks:saved.rewards).includes(String(id));
- function updateCount(){const el=document.getElementById('q22SavedCount');if(el)el.textContent=saved.tasks.length+saved.rewards.length;document.querySelectorAll('.q22-fav-btn').forEach(b=>{const yes=isSaved(b.dataset.type,b.dataset.id);b.classList.toggle('is-saved',yes);b.innerHTML=yes?'♥':'♡';b.setAttribute('aria-pressed',String(yes));b.title=yes?'შენახულებიდან ამოღება':'შენახვა'})}
+ function updateCount(){const total=saved.tasks.length+saved.rewards.length;const el=document.getElementById('q22SavedCount');if(el)el.textContent=total;const top=document.getElementById('q22SavedCountTop');if(top)top.textContent=total;document.querySelectorAll('.q22-fav-btn').forEach(b=>{const yes=isSaved(b.dataset.type,b.dataset.id);b.classList.toggle('is-saved',yes);b.innerHTML=yes?'♥':'♡';b.setAttribute('aria-pressed',String(yes));b.title=yes?'შენახულებიდან ამოღება':'შენახვა'})}
  window.q22ToggleSaved=function(type,id){const key=type==='task'?'tasks':'rewards';id=String(id);const was=saved[key].includes(id);if(was){saved[key]=saved[key].filter(x=>x!==id)}else{saved[key].push(id)}persist();updateCount();if(typeof toast==='function')toast(was?'შენახული სიიდან ამოიშალა':'შენახულებში დაემატა');if(document.getElementById('q22SavedOverlay')?.classList.contains('is-open'))window.q22OpenSaved()};
  function addButton(html,type,id){const mark=isSaved(type,id)?'♥':'♡';const button=`<button type="button" class="q22-fav-btn ${isSaved(type,id)?'is-saved':''}" data-type="${type}" data-id="${esc(id)}" aria-label="შენახვა" aria-pressed="${isSaved(type,id)}" title="შენახვა" onclick="event.preventDefault();event.stopPropagation();q22ToggleSaved('${type}','${esc(id)}')">${mark}</button>`;return html.replace(/(<article class="(?:task|reward)-card"[^>]*>)/,`$1${button}`)}
  // Reliable enhancement: decorate rendered cards directly, even when the original renderer is not globally exposed.
@@ -2334,6 +2374,8 @@ redeemReward = async function(){
  window.q22ClearSaved=function(){if(!confirm('გსურს შენახული სიის სრულად გასუფთავება?'))return;saved={tasks:[],rewards:[]};persist();window.q22OpenSaved();updateCount()};
  window.q22OpenSearch=function(){const overlay=document.getElementById('q22SearchOverlay');if(!overlay)return;overlay.classList.add('is-open');const input=document.getElementById('q22SearchInput');if(input){input.value='';window.q22RenderSearch('');setTimeout(()=>input.focus(),30)}};
  window.q22RenderSearch=function(query){const out=document.getElementById('q22SearchResults');if(!out)return;query=String(query||'').trim().toLocaleLowerCase();if(!query){out.innerHTML='<div class="q22-empty">დაიწყე აკრეფა — შედეგები აქ გამოჩნდება.</div>';return}const rows=[];for(const x of list('task'))if(`${x.title||''} ${x.description||''}`.toLocaleLowerCase().includes(query))rows.push({type:'task',x});for(const x of list('reward'))if(`${x.title||''} ${x.description||''}`.toLocaleLowerCase().includes(query))rows.push({type:'reward',x});out.innerHTML=rows.length?rows.slice(0,12).map(({type,x})=>{const img=esc(x.image_url||(typeof ASSETS!=='undefined'?(ASSETS[x.img]||(type==='task'?ASSETS.survey:ASSETS.gift)):'')||'');return `<button class="q22-result" onclick="q22OpenSearchItem('${type}','${esc(x.id)}')"><img src="${img}" alt=""/><span class="q22-result-main"><strong>${esc(x.title||'')}</strong><small>${type==='task'?'დავალება · '+(Number(x.points)||0)+' ქულა':'საჩუქარი · '+(Number(x.cost)||0)+' ქულა'}</small></span><span class="q22-result-action">გახსნა →</span></button>`}).join(''):'<div class="q22-empty">შესაბამისი შედეგი ვერ მოიძებნა. სცადე სხვა სიტყვა.</div>'};
+ window.q22RenderHomeSearch=function(query){const out=document.getElementById('qHomeSearchResults');if(!out)return;query=String(query||'').trim().toLocaleLowerCase();if(!query){out.hidden=true;out.innerHTML='';return}const rows=[];for(const x of list('task'))if(String(x.title||'').toLocaleLowerCase().includes(query))rows.push({type:'task',x});for(const x of list('reward'))if(String(x.title||'').toLocaleLowerCase().includes(query))rows.push({type:'reward',x});out.hidden=false;out.innerHTML=rows.length?rows.slice(0,8).map(({type,x})=>`<button type="button" class="q-home-search-result" onclick="q22OpenHomeSearchItem('${type}','${esc(x.id)}')"><span class="q-home-search-result-kind">${type==='task'?'დავალება':'საჩუქარი'}</span><strong>${esc(x.title||'')}</strong><span>გახსნა →</span></button>`).join(''):'<div class="q-home-search-empty">ამ სათაურით ვერაფერი მოიძებნა.</div>'};
+ window.q22OpenHomeSearchItem=function(type,id){const input=document.getElementById('qHomeSearchInput');const out=document.getElementById('qHomeSearchResults');if(out)out.hidden=true;if(input)input.blur();window.q22OpenItem(type,id)};
  window.q22OpenSearchItem=function(type,id){close('q22SearchOverlay');window.q22OpenItem(type,id)};
  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();window.q22OpenSearch()}if(e.key==='Escape'){close('q22SavedOverlay');close('q22SearchOverlay')}});
  document.addEventListener('DOMContentLoaded',updateCount);setTimeout(updateCount,700);
