@@ -724,6 +724,14 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
 #authModal.signup-page-mode .close{width:44px;height:44px;background:#e5edf8;border:1px solid #d4e0f0;}
 </style>
 
+
+<style id="qulani-register-arrow-v82">
+.auth-actions .auth-register-arrow{width:46px;height:44px;min-width:46px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:14px;background:linear-gradient(145deg,#1768b8,#123f7d);color:#fff;border:1px solid #2f6eac;box-shadow:0 3px 8px rgba(16,54,99,.18);transition:background .18s ease,transform .18s ease;line-height:1}
+.auth-actions .auth-register-arrow svg{display:block;overflow:visible}
+.auth-actions .auth-register-arrow:hover{background:linear-gradient(145deg,#1d73c7,#174987);transform:translateY(-1px);box-shadow:0 4px 10px rgba(16,54,99,.2)}
+.auth-actions .auth-register-arrow:active{transform:scale(.96)}
+@media(max-width:520px){.auth-actions .auth-register-arrow{width:40px;height:40px;min-width:40px;border-radius:12px}.auth-actions .auth-register-arrow svg{width:23px;height:23px}}
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -732,7 +740,6 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
     <div id="accountMenu" role="menu" aria-label="ანგარიშის მენიუ">
       <button type="button" id="accountAdminMenuItem" role="menuitem" onclick="accountMenuGo('admin')" style="display:none"><span class="menu-icon">⚙</span>ადმინისტრატორი</button>
       <button type="button" role="menuitem" onclick="accountMenuGo('partners')"><span class="menu-icon">🤝</span>პარტნიორები</button>
-      <button type="button" id="userNotificationsMenuItem" role="menuitem" onclick="accountMenuGo('notifications')"><span class="menu-icon" style="position:relative">🔔<span id="qUnreadMenuFlag" class="q-unread-flag" aria-hidden="true" style="top:-8px;right:-9px">🚩</span></span>შეტყობინებები<span id="qUnreadMenuCount" class="q-unread-count" style="position:static;margin-left:auto">0</span></button>
       <button type="button" role="menuitem" onclick="accountMenuGo('news')"><span class="menu-icon">📰</span>სიახლეები</button>
       <button type="button" role="menuitem" onclick="q22OpenSaved();toggleAccountMenu(event)"><span class="menu-icon">♡</span>შენახულები <span id="q22SavedCountTop" class="q-unread-count" style="position:static;margin-left:auto">0</span></button>
       <button type="button" role="menuitem" onclick="accountMenuLogout()"><span class="menu-icon"><svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden="true"><path d="M18 4H8.5C7.12 4 6 5.12 6 6.5v19C6 26.88 7.12 28 8.5 28H18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M15 16h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>ანგარიშიდან გასვლა</button>
@@ -756,9 +763,13 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
     <button data-page="partners" onclick="showPage('partners')">🤝 <span>პარტნიორები</span></button>
   </nav>
   <div class="rightbar">
+    <button type="button" id="qHeaderNotificationBell" class="q-header-notification-bell" onclick="accountMenuGo('notifications')" aria-label="შეტყობინებები" title="შეტყობინებები">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span id="qHeaderNotificationDot" class="q-header-notification-dot" aria-hidden="true"></span>
+    </button>
     <div class="auth-actions" id="loggedOutActions">
       <button class="auth-login" onclick="openAuth('signin')">შესვლა</button>
-      <button class="auth-register" onclick="openAuth('signup')">რეგისტრაცია</button>
+      <button class="auth-register auth-register-arrow" onclick="openAuth('signup')" aria-label="რეგისტრაცია" title="რეგისტრაცია"><svg viewBox="0 0 32 32" width="25" height="25" aria-hidden="true" focusable="false"><path d="M16 27V7M7 16l9-9 9 9" fill="none" stroke="currentColor" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <button class="user-chip" id="loggedInChip" onclick="showPage('profile')" aria-label="პროფილი" style="display:none">
       <span class="avatar" id="headerAvatar">👤</span>
@@ -1104,7 +1115,7 @@ function renderProgress(){
 }
 
 function showPage(name){if(String(name).toLowerCase()==="notifications"){qLoadUserNotifications();}if(String(name).toLowerCase()==="news"){qLoadPublicNews();}document.body.classList.toggle("auth-view", /login|signin|signup|register|auth/i.test(String(name)));if((name==="profile"||name==="history")&&!qUser){toast("პროფილისა და ისტორიის სანახავად ჯერ გაიარე ავტორიზაცია.");openAuth("signin");return;}document.querySelectorAll(".page-view").forEach(x=>x.classList.remove("active"));const target=document.getElementById("page-"+name);if(target)target.classList.add("active");document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===name));if(name==="history")renderHistory();if(name==="progress")renderProgress();if(name==="admin"){if(qAdminStatus!=="admin"){toast("ადმინისტრატორის წვდომა არ გაქვს.");showPage("home");return;}qLoadAdminStats();qLoadAdminTasks();qLoadAdminSubmissions();qLoadAdminRewards();qLoadAdminUsers();qLoadAdminPartners();qLoadAdminNews();}window.scrollTo({top:0,behavior:"smooth"})}
-function taskCard(t){const sent=state.submissions.some(s=>String(s.taskId)===String(t.id)&&s.status!=="rejected");const art=t.image_url?`<img src="${qEscapeHtml(t.image_url)}" alt="">`:`<img src="${ASSETS[t.img]||ASSETS.survey}" alt="">`;return `<article class="task-card"><div class="task-image">${art}<span class="points-badge">${t.points} ქულა</span></div><div class="task-content"><h3>${qEscapeHtml(t.title)}</h3><p>${qEscapeHtml(t.description)}</p><button class="blue-btn" ${sent?"disabled":""} onclick="openTask('${t.id}')">${sent?"გაგზავნილია ✓":"დაწყება　➜"}</button></div></article>`}
+function taskCard(t){const sent=state.submissions.some(s=>String(s.taskId)===String(t.id)&&s.status!=="rejected");const art=t.image_url?`<img src="${qEscapeHtml(t.image_url)}" alt="">`:`<img src="${ASSETS[t.img]||ASSETS.survey}" alt="">`;const pts=Math.max(0,Number(t.points)||0);const tier=pts>1000?'points-tier-red':pts>500?'points-tier-gold':pts>100?'points-tier-green':'points-tier-blue';return `<article class="task-card"><div class="task-image">${art}<span class="points-badge ${tier}">${fmt(pts)} ქულა</span></div><div class="task-content"><h3>${qEscapeHtml(t.title)}</h3><p>${qEscapeHtml(t.description)}</p><button class="blue-btn" ${sent?"disabled":""} onclick="openTask('${t.id}')">${sent?"გაგზავნილია ✓":"დაწყება　➜"}</button></div></article>`}
 function rewardCard(r){const redeemed=state.redeemed.some(x=>String(x.rewardId)===String(r.id));const image=String(r.image_url||ASSETS[r.img]||ASSETS.gift||'');return `<article class="reward-card"><div class="reward-art"><img src="${qEscapeHtml(image)}" alt=""></div><div class="reward-info"><h3>${qEscapeHtml(r.title||'საჩუქარი')}</h3><p>${qEscapeHtml(r.description||'')}</p><div class="reward-cost"><span class="coin">♛</span>${fmt(r.cost)} <small>ქულა</small></div><button class="blue-btn" ${redeemed?"disabled":""} onclick="openReward('${qEscapeHtml(String(r.id))}')">${redeemed?"გაცვლილია ✓":"მიღება"}</button></div></article>`}
 let qBalanceVisible=true;
 function toggleBalanceVisibility(){qBalanceVisible=!qBalanceVisible;const n=document.getElementById("balancePoints"),b=document.getElementById("balanceVisibilityBtn");if(n)n.textContent=qBalanceVisible?fmt(state.points):"••••";if(b){b.textContent=qBalanceVisible?"◉":"◎";b.title=qBalanceVisible?"ბალანსის დამალვა":"ბალანსის ჩვენება";b.setAttribute("aria-label",b.title);} }
@@ -1756,7 +1767,7 @@ async function qLoadAdminTasks(){
  try{const {data,error}=await qClient.from('tasks').select('id,title,description,points,image_url,is_published,requires_receipt,created_at').order('created_at',{ascending:false}).limit(100);if(error)throw error;qAdminTaskRows=data||[];qRenderAdminTasks();}
  catch(e){list.innerHTML='<div class="notice">დავალებების სიის წაკითხვა ვერ მოხერხდა: '+qEscapeHtml(e.message||'წვდომის შეცდომა')+'.</div>';}
 }
-qAdminSubmissionRows=qAdminSubmissionRows||[]; qAdminReceiptUrls=qAdminReceiptUrls||{}; qAdminReceiptErrors=qAdminReceiptErrors||{}; qAdminSubmissionPage=qAdminSubmissionPage||1;
+qAdminSubmissionRows=qAdminSubmissionRows||[]; qAdminReceiptUrls=qAdminReceiptUrls||{}; qAdminReceiptErrors=qAdminReceiptErrors||{}; qAdminSubmissionPage=qAdminSubmissionPage||1; var qAdminSubmissionProfiles=window.qAdminSubmissionProfiles||{}; window.qAdminSubmissionProfiles=qAdminSubmissionProfiles;
 async function qCreateReceiptSignedUrl(receiptPath){
  if(!qClient||!receiptPath)return {url:null,error:'ფაილის მისამართი ცარიელია.'};
  const raw=String(receiptPath).trim();
@@ -1787,7 +1798,7 @@ function qRenderAdminSubmissionPage(){
  const pageRows=activeRows.slice((qAdminSubmissionPage-1)*pageSize,qAdminSubmissionPage*pageSize);
  if(!total){list.innerHTML='<div class="empty">ახალი, განსახილველი დავალებები არ არის. დადასტურებული და უარყოფილი დავალებები არქივში ინახება.</div>'; if(pager)pager.style.display='none';return;}
  const taskMap=new Map((qDbTasks||[]).map(t=>[String(t.id),t]));
- list.innerHTML=pageRows.map(s=>{const task=taskMap.get(String(s.task_id));const image=qAdminReceiptUrls[s.id]?`<button type="button" class="q-receipt-toggle" data-receipt-toggle="${qEscapeHtml(s.id)}" aria-expanded="false" onclick="qToggleReceipt('${qEscapeHtml(s.id)}')"><span class="q-receipt-toggle-icon" aria-hidden="true">◉̸</span><span>ფოტოს ნახვა</span></button><div id="qReceiptWrap-${qEscapeHtml(s.id)}" style="display:none;margin-top:10px"><a href="${qAdminReceiptUrls[s.id]}" target="_blank" rel="noopener"><img class="q-receipt-preview" src="${qAdminReceiptUrls[s.id]}" alt="მომხმარებლის ატვირთული ქვითარი" loading="lazy" style="display:block;max-width:100%;width:320px;height:auto;max-height:360px;object-fit:contain"></a></div>`:(s.receipt_path?`<div class="notice">ფოტოს გახსნა ვერ მოხერხდა: ${qEscapeHtml(qAdminReceiptErrors[s.id]||'receipts bucket-ის წვდომა ან ფაილის მისამართი გადაამოწმე.')}</div>`:'');return `<div class="history-item" style="align-items:flex-start"><div style="min-width:0;flex:1"><strong>${qEscapeHtml(task?.title||'დავალება')}</strong><span class="q-new-flag" title="ახალი, განსახილველი დავალება"><span class="q-flag-icon" aria-hidden="true">🚩</span> ახალი</span><div class="muted">მომხმარებელი: ${qEscapeHtml(s.user_id)} · ${s.created_at?new Date(s.created_at).toLocaleString('ka-GE'):''}</div><div>${qEscapeHtml(s.note||'პასუხი/შენიშვნა არ დაურთავს')}</div><div class="muted">სტატუსი: ${qEscapeHtml(s.status)}${s.receipt_path?' · ქვითრის ფაილი ატვირთულია':''}</div>${image}${s.review_note?`<div class="muted">შენიშვნა: ${qEscapeHtml(s.review_note)}</div>`:''}${s.status==='pending'?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="blue-btn" style="width:auto" onclick="qReviewSubmission('${s.id}','approved')">დამტკიცება (+${Number(task?.points)||0} ქულა)</button><button type="button" class="secondary-btn" onclick="qReviewSubmission('${s.id}','rejected')">უარყოფა</button></div>`:''}</div></div>`}).join('');
+ list.innerHTML=pageRows.map(s=>{const task=taskMap.get(String(s.task_id));const prof=qAdminSubmissionProfiles[String(s.user_id)]||{};const fullName=[prof.first_name,prof.last_name].filter(Boolean).join(' ').trim()||prof.email||'სახელი მითითებული არ არის';const image=qAdminReceiptUrls[s.id]?`<button type="button" class="q-receipt-toggle" data-receipt-toggle="${qEscapeHtml(s.id)}" aria-expanded="false" onclick="qToggleReceipt('${qEscapeHtml(s.id)}')"><span class="q-receipt-toggle-icon" aria-hidden="true">◉̸</span><span>ფოტოს ნახვა</span></button><div id="qReceiptWrap-${qEscapeHtml(s.id)}" style="display:none;margin-top:10px"><a href="${qAdminReceiptUrls[s.id]}" target="_blank" rel="noopener"><img class="q-receipt-preview" src="${qAdminReceiptUrls[s.id]}" alt="მომხმარებლის ატვირთული ქვითარი" loading="lazy" style="display:block;max-width:100%;width:320px;height:auto;max-height:360px;object-fit:contain"></a></div>`:(s.receipt_path?`<div class="notice">ფოტოს გახსნა ვერ მოხერხდა: ${qEscapeHtml(qAdminReceiptErrors[s.id]||'receipts bucket-ის წვდომა ან ფაილის მისამართი გადაამოწმე.')}</div>`:'');return `<div class="history-item" style="align-items:flex-start"><div style="min-width:0;flex:1"><strong>${qEscapeHtml(task?.title||'დავალება')}</strong><span class="q-new-flag" title="ახალი, განსახილველი დავალება"><span class="q-flag-icon" aria-hidden="true">🚩</span> ახალი</span><div class="muted">მომხმარებელი: <button type="button" class="q-admin-submission-user-link" onclick="qOpenAdminUserProfile('${qEscapeHtml(s.user_id)}')">${qEscapeHtml(fullName)}</button> · ID: <span>${qEscapeHtml(s.user_id)}</span> · ${s.created_at?new Date(s.created_at).toLocaleString('ka-GE'):''}</div><div>${qEscapeHtml(s.note||'პასუხი/შენიშვნა არ დაურთავს')}</div><div class="muted">სტატუსი: ${qEscapeHtml(s.status)}${s.receipt_path?' · ქვითრის ფაილი ატვირთულია':''}</div>${image}${s.review_note?`<div class="muted">შენიშვნა: ${qEscapeHtml(s.review_note)}</div>`:''}${s.status==='pending'?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="blue-btn" style="width:auto" onclick="qReviewSubmission('${s.id}','approved')">დამტკიცება (+${Number(task?.points)||0} ქულა)</button><button type="button" class="secondary-btn" onclick="qReviewSubmission('${s.id}','rejected')">უარყოფა</button></div>`:''}</div></div>`}).join('');
  if(pager){pager.style.display=pageCount>1?'flex':'none';pager.innerHTML=pageCount>1?`<button type="button" ${qAdminSubmissionPage===1?'disabled':''} onclick="qSetAdminSubmissionPage(${qAdminSubmissionPage-1})">‹ წინა</button>${Array.from({length:pageCount},(_,i)=>i+1).map(n=>`<button type="button" class="${n===qAdminSubmissionPage?'current':''}" aria-current="${n===qAdminSubmissionPage?'page':'false'}" onclick="qSetAdminSubmissionPage(${n})">${n}</button>`).join('')}<span class="page-count">${(qAdminSubmissionPage-1)*pageSize+1}–${Math.min(qAdminSubmissionPage*pageSize,total)} / ${total}</span><button type="button" ${qAdminSubmissionPage===pageCount?'disabled':''} onclick="qSetAdminSubmissionPage(${qAdminSubmissionPage+1})">შემდეგი ›</button>`:'';}
 }
 function qSetAdminSubmissionPage(page){qAdminSubmissionPage=page;qRenderAdminSubmissionPage();document.getElementById('adminSubmissionsHeading')?.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -1828,6 +1839,24 @@ async function qDeleteArchivedSubmission(id){
 }
 async function qLoadAdminArchive(){const list=document.getElementById('adminArchiveList');if(!list||!qClient||!qUser||qAdminStatus!=='admin')return;list.innerHTML='<div class="muted">არქივი იტვირთება…</div>';try{const [sr,gr]=await Promise.all([qClient.from('submissions').select('id,user_id,task_id,status,note,receipt_path,review_note,created_at').in('status',['approved','rejected']).order('created_at',{ascending:false}).limit(500),qClient.from('reward_redemptions').select('id,user_id,reward_id,reward_title,points_spent,status,fulfillment_note,created_at,fulfilled_at').eq('status','fulfilled').order('fulfilled_at',{ascending:false}).limit(500)]);if(sr.error)throw sr.error;if(gr.error)throw gr.error;qAdminArchiveRows=sr.data||[];qAdminIssuedGiftRows=gr.data||[];qAdminArchiveReceiptUrls={};qAdminArchiveReceiptErrors={};for(const sub of qAdminArchiveRows){if(sub.receipt_path){const result=await qCreateReceiptSignedUrl(sub.receipt_path);if(result.url)qAdminArchiveReceiptUrls[sub.id]=result.url;else qAdminArchiveReceiptErrors[sub.id]=result.error;}}qRenderAdminArchive();}catch(e){list.innerHTML='<div class="notice">არქივის ჩატვირთვა ვერ მოხერხდა: '+qEscapeHtml(e.message||'უცნობი შეცდომა')+'</div>';}}
 window.qLoadAdminArchive=qLoadAdminArchive;window.qRenderAdminArchive=qRenderAdminArchive;window.qToggleArchiveReceipt=qToggleArchiveReceipt;
+async function qOpenAdminUserProfile(userId){
+ if(!qClient||!qUser||qAdminStatus!=='admin'){toast('პროფილის ნახვა მხოლოდ ადმინისტრატორს შეუძლია.');return;}
+ const overlay=document.getElementById('qAdminUserProfileOverlay'),body=document.getElementById('qAdminUserProfileBody');if(!overlay||!body)return;
+ overlay.classList.add('open');body.innerHTML='<div class="muted">მომხმარებლის პროფილი იტვირთება…</div>';
+ try{
+  let profile=qAdminSubmissionProfiles[String(userId)];
+  if(!profile){const r=await qClient.from('profiles').select('id,first_name,last_name,email,phone,created_at,is_blocked').eq('id',userId).maybeSingle();if(r.error)throw r.error;profile=r.data||{};qAdminSubmissionProfiles[String(userId)]=profile;}
+  const [lr,sr]=await Promise.all([qClient.from('points_ledger').select('points_delta').eq('user_id',userId),qClient.from('submissions').select('id,status,task_id,created_at').eq('user_id',userId).order('created_at',{ascending:false}).limit(10)]);
+  if(lr.error)throw lr.error;if(sr.error)throw sr.error;
+  const balance=(lr.data||[]).reduce((sum,row)=>sum+(Number(row.points_delta)||0),0);
+  const name=[profile.first_name,profile.last_name].filter(Boolean).join(' ')||profile.email||'მომხმარებელი';
+  const tasksById=new Map((qDbTasks||[]).map(t=>[String(t.id),t]));
+  const history=(sr.data||[]).map(row=>`<div class="q-admin-profile-row"><strong>${qEscapeHtml(tasksById.get(String(row.task_id))?.title||'დავალება')}</strong><div class="muted">${qEscapeHtml(row.status||'')} · ${row.created_at?new Date(row.created_at).toLocaleString('ka-GE'):'—'}</div></div>`).join('')||'<div class="muted">დავალებების ისტორია არ არის.</div>';
+  body.innerHTML=`<div style="font-size:22px;font-weight:800;margin-bottom:8px">${qEscapeHtml(name)}</div><div class="q-admin-profile-row"><strong>მომხმარებლის ID</strong><div>${qEscapeHtml(profile.id||userId)}</div></div><div class="q-admin-profile-row"><strong>ელფოსტა</strong><div>${qEscapeHtml(profile.email||'მითითებული არ არის')}</div></div><div class="q-admin-profile-row"><strong>ტელეფონი</strong><div>${qEscapeHtml(profile.phone||'მითითებული არ არის')}</div></div><div class="q-admin-profile-row"><strong>რეგისტრაცია</strong><div>${qEscapeHtml(profile.created_at?new Date(profile.created_at).toLocaleString('ka-GE'):'უცნობია')}</div></div><div class="q-admin-profile-row"><strong>ქულების ბალანსი</strong><div>${balance} ქულა</div></div><div class="q-admin-profile-row"><strong>ანგარიშის სტატუსი</strong><div>${profile.is_blocked?'დაბლოკილია':'აქტიურია'}</div></div><h3 style="margin:18px 0 8px">ბოლო დავალებები</h3>${history}<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px"><button type="button" class="secondary-btn" onclick="qCloseAdminUserProfile();showPage('admin');document.getElementById('adminUsersHeading')?.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('adminUserSearch').value=${JSON.stringify(String(userId))};qRenderAdminUsers();">მომხმარებლის მართვა</button><button type="button" class="blue-btn" onclick="qCloseAdminUserProfile()">დახურვა</button></div>`;
+ }catch(e){body.innerHTML='<div class="notice">პროფილის ჩატვირთვა ვერ მოხერხდა: '+qEscapeHtml(e.message||'უცნობი შეცდომა')+'</div>';}
+}
+function qCloseAdminUserProfile(){document.getElementById('qAdminUserProfileOverlay')?.classList.remove('open');}
+window.qOpenAdminUserProfile=qOpenAdminUserProfile;window.qCloseAdminUserProfile=qCloseAdminUserProfile;
 async function qLoadAdminSubmissions(){
  const list=document.getElementById('adminSubmissionList');if(!list||!qClient||!qUser||qAdminStatus!=='admin')return;
  list.innerHTML='<div class="muted">გაგზავნილები იტვირთება…</div>';
@@ -1835,6 +1864,9 @@ async function qLoadAdminSubmissions(){
   const {data,error}=await qClient.from('submissions').select('id,user_id,task_id,status,note,receipt_path,review_note,created_at').order('created_at',{ascending:false}).limit(50);
   if(error)throw error;
   qAdminSubmissionRows=data||[];qAdminReceiptUrls={};qAdminReceiptErrors={};qAdminSubmissionPage=1;qUpdateAdminSubmissionNotice(false);
+  qAdminSubmissionProfiles={};window.qAdminSubmissionProfiles=qAdminSubmissionProfiles;
+  const submissionUserIds=[...new Set(qAdminSubmissionRows.map(x=>x.user_id).filter(Boolean))];
+  if(submissionUserIds.length){const pr=await qClient.from('profiles').select('id,first_name,last_name,email,phone,created_at,is_blocked').in('id',submissionUserIds);if(pr.error)throw pr.error;for(const profile of (pr.data||[]))qAdminSubmissionProfiles[String(profile.id)]=profile;}
   for(const sub of qAdminSubmissionRows){if(sub.receipt_path){const result=await qCreateReceiptSignedUrl(sub.receipt_path);if(result.url)qAdminReceiptUrls[sub.id]=result.url;else qAdminReceiptErrors[sub.id]=result.error;}}
   qRenderAdminSubmissionPage();
  }catch(e){list.innerHTML='<div class="notice">გაგზავნილების ჩატვირთვა ვერ მოხერხდა: '+qEscapeHtml(e.message||'უცნობი შეცდომა')+'. საჭირო იქნება SQL მიგრაციის გაშვება და submissions SELECT RLS პოლიტიკის შემოწმება.</div>';}
@@ -2587,6 +2619,36 @@ if(requiredProfileForm)requiredProfileForm.addEventListener('submit',async funct
   const oldRedeemReward = window.redeemReward;
   if (typeof oldRedeemReward === 'function') window.redeemReward = function(){ if(!requirePhoneForQulaniAction()) return; return oldRedeemReward.apply(this, arguments); };
 })();
+</script>
+
+<style id="q-admin-user-profile-modal-style">
+.q-admin-submission-user-link{border:0;background:transparent;padding:0;color:#155eef;text-decoration:underline;font:inherit;font-weight:750;cursor:pointer;text-align:left}
+#qAdminUserProfileOverlay{position:fixed;inset:0;z-index:300000;background:rgba(10,20,40,.62);display:none;align-items:center;justify-content:center;padding:16px}
+#qAdminUserProfileOverlay.open{display:flex}
+#qAdminUserProfileCard{width:min(100%,560px);max-height:88vh;overflow:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 24px 70px #0004;color:#243244}
+#qAdminUserProfileCard .q-admin-profile-row{padding:10px 0;border-bottom:1px solid #e7edf5;overflow-wrap:anywhere}
+</style>
+<div id="qAdminUserProfileOverlay" role="dialog" aria-modal="true" aria-labelledby="qAdminUserProfileTitle" onclick="if(event.target===this)qCloseAdminUserProfile()"><div id="qAdminUserProfileCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 id="qAdminUserProfileTitle" style="margin:0;font-size:21px">მომხმარებლის პროფილი</h2><button type="button" class="secondary-btn" onclick="qCloseAdminUserProfile()" aria-label="დახურვა">✕</button></div><div id="qAdminUserProfileBody" style="margin-top:14px">იტვირთება…</div></div></div>
+
+<style id="qulani-header-bell-and-points-v81">
+/* Compact header bell: notification navigation lives outside the account menu. */
+.q-header-notification-bell{position:relative;display:inline-grid;place-items:center;flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid rgba(210,222,241,.8);background:linear-gradient(145deg,#132b4c,#09182d);color:#f5f8ff;box-shadow:inset 0 1px 0 #ffffff1c,0 5px 14px #07172b25;cursor:pointer;transition:transform .16s,background .16s}
+.q-header-notification-bell:active{transform:scale(.96)}
+.q-header-notification-dot{position:absolute;right:5px;top:5px;width:9px;height:9px;border-radius:50%;background:#ff354b;border:1.5px solid #102440;display:none}
+.q-header-notification-dot.is-visible{display:block}
+/* Bookmark/favorite control: short round button like the supplied reference. */
+.q22-fav-btn{width:42px!important;height:42px!important;min-width:42px!important;border-radius:50%!important;background:rgba(9,25,46,.72)!important;color:#fff!important;border:1px solid rgba(255,255,255,.55)!important;box-shadow:0 3px 12px #0003,inset 0 1px 0 #ffffff38!important;font-size:25px!important;font-weight:500!important;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.q22-fav-btn.is-saved{background:#f7e5a8!important;color:#9b2437!important;border-color:#ffe7a1!important}
+/* Reward-point badges use a calm solid matte palette, ordered by threshold. */
+.points-badge{border:1px solid rgba(255,255,255,.5);box-shadow:0 3px 9px #07172b20;font-weight:900}
+.points-badge.points-tier-blue{background:#dce9ff!important;color:#164f9b!important;border-color:#bdd4ff!important}
+.points-badge.points-tier-green{background:#d9e9d8!important;color:#315b43!important;border-color:#b8d2b9!important}
+.points-badge.points-tier-gold{background:#ead1a0!important;color:#68451e!important;border-color:#d7b66e!important}
+.points-badge.points-tier-red{background:#f1d0d1!important;color:#9c2630!important;border-color:#e6a9ad!important}
+@media(max-width:760px){.q-header-notification-bell{width:38px;height:38px}.q-header-notification-bell svg{width:21px;height:21px}.q22-fav-btn{width:38px!important;height:38px!important;min-width:38px!important;font-size:23px!important}}
+</style>
+<script id="qulani-header-bell-dot-v81">
+(function(){function sync(){var old=document.getElementById('qUnreadCount'),dot=document.getElementById('qHeaderNotificationDot');if(!dot)return;var n=old?parseInt((old.textContent||'0').trim(),10)||0:0;var flag=document.getElementById('qUnreadFlag');var visible=n>0||(flag&&getComputedStyle(flag).display!=='none'&&flag.classList.contains('visible'));dot.classList.toggle('is-visible',!!visible);var b=document.getElementById('qHeaderNotificationBell');if(b)b.setAttribute('aria-label',visible?'შეტყობინებები — ახალი შეტყობინება':'შეტყობინებები');}document.addEventListener('DOMContentLoaded',function(){sync();var n=document.getElementById('qUnreadCount');if(n)new MutationObserver(sync).observe(n,{childList:true,subtree:true,characterData:true});var f=document.getElementById('qUnreadFlag');if(f)new MutationObserver(sync).observe(f,{attributes:true,childList:true,subtree:true,characterData:true});setInterval(sync,2500);});})();
 </script>
 
 </body>
