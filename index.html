@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f5f8fc">
-<title>პრიზები შენი აქტიურობისთვის</title>
+<title>ქულანი — ჯილდოები შენი აქტიურობისთვის</title>
 <style>
 :root{--navy:#071b4a;--blue:#087cf5;--blue2:#268dfb;--gold:#ffca28;--muted:#66738c;--line:#e5ebf4;--bg:#f4f7fb;--green:#0ba878;--shadow:0 8px 28px #163d7110}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#0b1b43;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:14px}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #8dc5ff;outline-offset:2px}
@@ -622,18 +622,79 @@ a { -webkit-tap-highlight-color: rgba(8,117,237,.16); }
 .q22-envelope-dock.is-open .q22-envelope-menu { pointer-events: auto; }
 </style>
 
-<style id="qulani-mobile-touch-layer-fix-v72">
-/* Mobile: floating utility containers must not create a large invisible hit layer. */
+<style id="qulani-mobile-touch-layer-fix-v73">
+/* On phones, floating widgets only receive taps on their visible controls. */
 @media (max-width: 760px) {
   .q22-floating-tools, .q22-envelope-dock { pointer-events: none !important; }
-  .q22-floating-tools > *, .q22-envelope-dock > *, .q22-envelope-menu > *, .q22-tool-btn, .q22-envelope-trigger, .q22-envelope-dock button { pointer-events: auto !important; }
+  .q22-floating-tools button, .q22-floating-tools a, .q22-envelope-dock button, .q22-envelope-dock a { pointer-events: auto !important; }
   .q22-floating-tools { right: 10px !important; bottom: calc(74px + env(safe-area-inset-bottom)) !important; z-index: 80 !important; }
   .q22-envelope-dock { right: 10px !important; bottom: calc(76px + env(safe-area-inset-bottom)) !important; z-index: 95 !important; }
   .q22-envelope-menu { pointer-events: none !important; }
   .q22-envelope-dock.is-open .q22-envelope-menu { pointer-events: auto !important; }
+  .q22-envelope-menu:not(.open) { visibility: hidden !important; }
+  #accountMenu { z-index: 200010 !important; }
+  #accountMenu button { position: relative; z-index: 200011; pointer-events: auto !important; touch-action: manipulation; }
+  nav.mobile-bottom { z-index: 100 !important; pointer-events: auto !important; }
+  nav.mobile-bottom button { pointer-events: auto !important; }
 }
 </style>
 
+
+<style id="qulani-collapsed-menu-hitbox-fix-v74">
+/* Closed quick-actions menu must occupy no layout or touch area at all. */
+@media (max-width: 760px) {
+  #q22EnvelopeDock { pointer-events: none !important; }
+  #q22EnvelopeTrigger { pointer-events: auto !important; position: relative; z-index: 2; }
+  #q22EnvelopeMenu { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+  #q22EnvelopeDock.is-open #q22EnvelopeMenu { display: flex !important; visibility: visible !important; pointer-events: auto !important; }
+  #q22EnvelopeDock.is-open #q22EnvelopeMenu > * { pointer-events: auto !important; }
+  #accountMenu { pointer-events: auto; }
+  #accountMenu:not(.open) { visibility: hidden; pointer-events: none; }
+  #accountMenu.open { visibility: visible; pointer-events: auto; }
+}
+</style>
+
+<style id="qulani-auth-feedback-design-v75">
+/* Registration/login feedback: visible above every page layer on mobile and desktop. */
+.toast {
+  top: calc(14px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translate(-50%, -14px) !important;
+  opacity: 0;
+  z-index: 2147483647 !important;
+  width: max-content;
+  max-width: calc(100vw - 28px) !important;
+  box-sizing: border-box;
+  padding: 14px 18px !important;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #102d61, #0875ed) !important;
+  color: #fff !important;
+  font-weight: 750;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: 0 14px 38px rgba(5,24,58,.32) !important;
+  pointer-events: none !important;
+}
+.toast.show { opacity: 1 !important; transform: translate(-50%, 0) !important; }
+#authSubmitButton {
+  min-height: 54px !important;
+  border: 1px solid rgba(255,255,255,.32) !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #0b2b61 0%, #0875ed 58%, #4b9bff 100%) !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 850 !important;
+  letter-spacing: .2px;
+  box-shadow: 0 8px 18px rgba(8,117,237,.27), inset 0 1px 0 rgba(255,255,255,.24) !important;
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+#authSubmitButton:not(:disabled):active { transform: scale(.985); filter: brightness(.96); }
+#authSubmitButton:disabled { opacity: .78; box-shadow: none !important; }
+#authSubmitButton:focus-visible { outline: 3px solid #f4c84a; outline-offset: 3px; }
+#authModal .auth-error { position: relative; z-index: 2; }
+</style>
 </head>
 <body>
 <header class="topbar">
@@ -1947,7 +2008,7 @@ function selectSiteBackground(color){
 function toggleAccountMenu(e){if(e)e.stopPropagation();const menu=document.getElementById('accountMenu');const btn=document.getElementById('accountMenuToggle');if(!menu||!btn)return;const opening=!menu.classList.contains('open');menu.classList.toggle('open',opening);btn.setAttribute('aria-expanded',String(opening));}
 function closeAccountMenu(){const menu=document.getElementById('accountMenu');const btn=document.getElementById('accountMenuToggle');if(menu)menu.classList.remove('open');if(btn)btn.setAttribute('aria-expanded','false');}
 function accountMenuGo(page){closeAccountMenu();showPage(page);}
-function accountMenuLogout(){closeAccountMenu();qSignOut();}
+function accountMenuLogout(e){if(e){e.preventDefault();e.stopPropagation();}closeAccountMenu();if(typeof window.qSignOut==='function')window.qSignOut();}
 document.addEventListener('click',function(e){const wrap=document.getElementById('accountMenuWrap');if(wrap&&!wrap.contains(e.target))closeAccountMenu();});
 async function qSignOut(){
  if(!qClient){toast('კავშირი ვერ ხერხდება.');return;}
