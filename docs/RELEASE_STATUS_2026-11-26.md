@@ -48,8 +48,11 @@ Applied migrations:
 - Database transaction tests: automatic submit-event generation passed; duplicate live submissions were rejected; participant-limit overrun was rejected; non-admin review and client-forged submit event were rejected. All test transactions were rolled back.
 - Live data after tests: 1 submission, 10 campaign events, 2 campaigns, 2 business profiles — unchanged.
 - Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains disabled.
-- Performance Advisor: 51 auth RLS init-plan warnings, 62 multiple-permissive-policy warnings, and 59 unused-index informational notices remain.
+- Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 56 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
 - Health Advisor: no lints.
+- Exact duplicate policy cleanup: 6 groups / 7 redundant permissive policies removed; public policy count reduced from 154 to 147 with effective access predicates unchanged.
+- Auth RLS optimization: 47 policies now wrap request-constant `auth.uid()` values in scalar subqueries; Advisor reports 0 auth RLS init-plan warnings.
+- The migration history includes a no-op entry `20261126092459 qulup_rls_auth_uid_initplan_optimization_2026_11_26` (empty query, no schema change), followed by the actual 47-policy optimization migration `20261126092512 qulup_rls_auth_uid_initplan_optimization_apply_2026_11_26`.
 - Edge Functions deployed: 0.
 - Headless Chromium did not complete page loading within the test window; no visual/browser E2E pass is claimed.
 
