@@ -1,95 +1,84 @@
-# QULUP — Release audit and status (26 November 2026)
+# QULUP — Release audit and progress (26 November 2026)
 
 ## Executive status
 
-**Database hardening has been applied and verified. Full production launch is NOT cleared.** The website, business portal, QULUP game module and Supabase project were inspected. Three production migrations were applied. No user data was deleted or rewritten.
+**Database hardening is applied. A tested Release Candidate has been prepared for the website. Full Production launch remains NO-GO** until payment, NEXORA, hosting/domain and real browser acceptance work is complete.
 
-## Verified source snapshot
+## Source and frontend changes
 
-- Latest website source found in the user's Library: `index(1).html`, dated 25 November 2026; source size 8,469,925 bytes.
-- Desktop styles include V82 baseline and later desktop refinements through V87. Mobile styling was not changed.
-- Node.js syntax checks passed for 12 main-page scripts and the embedded business-portal script.
-- Static checks found no Service Role key in browser code; only a publishable Supabase key is present.
-- Main website has a QULUP LEVEL game iframe and a whitelisted RPC bridge (`qulup_game_start_quiz`, `qulup_game_submit_quiz_answer`) plus server-backed level progress.
-- The main website contains no NEXORA route or reference (`nexora` case-insensitive scan: 0 matches). GitHub `main/index.html` is an older ~661 KB version and is materially behind the Library snapshot. The 8.47 MB source was not copied over `main` because it needs a controlled sync and visual acceptance tests first.
-- The business portal exists inside the latest HTML as an embedded document. The separate tracking helper exists as a Library asset but is not included/called by the current main page.
+- The latest Library source snapshot is `index(1).html` (25 November 2026, about 8.47 MB), containing the V82 desktop baseline and refinements through V87.
+- The GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The updated 8.47 MB Release Candidate is included in the attached release package. GitHub PR #1 contains the SQL and documentation, not the full large HTML file.
+- The existing latest source already had active partner-campaign listing, photo/text submission, private proof storage, admin review and personal-submission fetch logic. The review corrected the previous audit wording.
+- The Release Candidate adds a submit action for both task and branded-challenge campaigns, participant-limit display, a visible personal campaign-submission history, cleanup of unlinked proof uploads after failed submission, and authenticated-only campaign view/start event tracking.
+- The candidate keeps mobile-specific styling unchanged.
 
-## NEXORA integration assessment — corrected after locating its source files
-
-The separate project assets exist:
-
-- `nexora.html` — standalone 2D browser prototype with Slots, Flight, Cards, World, Arena and Championship demo screens.
-- `NEXORA_Final_Boss_Demo.html` — separate Final Boss Challenge playable prototype.
-- `MASTER_SPEC_KA.md` — master gameplay and technical specification.
-
-The master specification explicitly states that its current version is a 2D prototype, not final Unreal Engine 5 production; no server or actual QULUP integration is implemented; and the wallet is a local simulation. Both HTML demos use local `credits` / `demoWallet` state, with no Supabase client, `qClient`, QULUP RPC calls, or remote API calls. JavaScript syntax checks passed for their 4 script blocks.
-
-**Therefore NEXORA is an existing prototype/specification, but it is not integrated with QULUP authentication or the real QULUP Points ledger.** It must not be wired to live points by accepting client-reported wins or balances. Next implementation needs server-authoritative game sessions, verified battle/round outcomes, nonce/idempotency, atomic ledger writes, audit log and anti-cheat validation before enabling cashout/points credit. Unreal Engine 5 production and device performance tests are also not complete. See `docs/NEXORA_QULUP_Integration_Handoff.md`.
-
-## Supabase changes applied
+## Supabase work completed
 
 Project: `CoolANProject` (`qnqncedovahezxfnlueh`).
 
-1. Revoked `anon` and `PUBLIC` execute rights from `is_admin`, `is_challenge_admin`, `qulani_is_admin`, and `qulup_is_admin`; authenticated execution remains available for existing RLS usage.
-2. Split reward and business-plan public reads from staff-only helper calls.
-3. Fixed business payment validation so a payment must match the same business as the related campaign/subscription and exact payable amount (campaign total or active plan price); currency is GEL and amount must be positive.
-4. Aligned campaign RLS with the portal: company managers can create/edit task and branded-challenge drafts; active campaigns are public-read; staff alone can moderate/delete campaigns.
-5. Added covering B-tree indexes for all 47 foreign keys reported by the advisor; post-check: zero unindexed public foreign keys.
-6. Removed two identical secondary indexes while preserving primary-key/unique equivalents.
-7. Consolidated key business/reward policies to reduce overlapping permissions.
+Earlier release hardening:
+1. Revoked anonymous/public EXECUTE on `is_admin`, `is_challenge_admin`, `qulani_is_admin`, and `qulup_is_admin`; authenticated use remains.
+2. Corrected business payment binding to ensure business ID, related campaign/subscription ID, amount and GEL currency match.
+3. Aligned task and branded-challenge draft RLS permissions.
+4. Added indexes covering all 47 previously uncovered public foreign keys; post-check: zero unindexed foreign keys.
+5. Removed two duplicate indexes and consolidated selected business/reward policies.
 
-Applied migration records:
+Business campaign submission hardening:
+1. Anonymous access to campaign-event INSERT and submission table privileges were removed. Authenticated users retain only SELECT/INSERT for submissions and SELECT/INSERT for events; users cannot UPDATE or DELETE their submissions or events.
+2. A database BEFORE INSERT trigger validates the authenticated user, active campaign, type, end date, description length, proof-file owner/path, duplicate live submission and participant limit.
+3. The campaign row is locked while checking the participant cap, preventing concurrent submissions from exceeding the cap.
+4. An AFTER INSERT trigger records the submit event in the same database transaction. The client can no longer forge submit events directly.
+5. Users may remove only their own unlinked proof upload; linked evidence cannot be deleted by its owner.
+6. The admin review RPC uses the same QULUP superadmin/admin_users registry as the rest of the platform, has a fixed empty search_path, rejects invalid statuses/oversized notes, and awards points only once.
 
+Applied migrations:
 - `20261126060739 qulup_release_hardening_20261126`
 - `20261126060906 qulup_fk_index_cleanup_20261126`
 - `20261126061006 qulup_release_policy_consolidation_20261126`
+- `20261126073056 qulup_business_submission_guard_events_20261126`
+- The follow-up admin membership review function update was also applied after the 07:30 migration.
+
+## Verification results
+
+- JavaScript syntax: 12/12 non-empty inline scripts passed `node --check`.
+- HTML IDs: 412 found, zero duplicates.
+- Frontend runtime smoke tests: history rendering, XSS escaping, authenticated tracking, anonymous tracking suppression and submission insert all passed.
+- Database transaction tests: automatic submit-event generation passed; duplicate live submissions were rejected; participant-limit overrun was rejected; non-admin review and client-forged submit event were rejected. All test transactions were rolled back.
+- Live data after tests: 1 submission, 10 campaign events, 2 campaigns, 2 business profiles — unchanged.
+- Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains disabled.
+- Performance Advisor: 51 auth RLS init-plan warnings and 62 multiple-permissive-policy warnings remain; 60 unused-index informational notices remain.
+- Health Advisor: no lints.
+- Edge Functions deployed: 0.
+- Headless Chromium did not complete page loading within the test window; no visual/browser E2E pass is claimed.
 
 ## Current live data snapshot
 
 | Item | Count / state |
 |---|---:|
-| Public tables | 54 (RLS enabled on all) |
+| Public tables | 54 (RLS enabled) |
 | Business profiles | 2 |
 | Business campaigns | 2 (one task, one challenge; both active) |
 | Business subscriptions | 0 |
 | Business payment requests | 1 |
 | Business campaign events | 10 |
 | Business campaign submissions | 1 |
-| Game catalog | 1 (`QULUP LEVEL`, active) |
-| Edge Functions | 0 deployed |
+| Game catalog | 1 (QULUP LEVEL) |
+| Edge Functions | 0 |
 
-## Verification
+## Remaining production blockers
 
-- Security advisor: anonymous execute warnings for the four admin helpers cleared.
-- Health advisor: no lints.
-- Foreign-key advisor check: 0 unindexed public foreign keys.
-- Two duplicate indexes removed.
-- RLS enabled on every public table.
-- Three game tables intentionally have no direct policies: game questions, reward rules and sessions remain server-RPC-only. Quiz start/answer RPCs validate the signed-in user and a session nonce.
-- JavaScript syntax: 12 main-site scripts + embedded business portal + 1 NEXORA script + 3 Final Boss scripts passed `node --check`.
-- HTML parser check on the main page found no duplicate IDs.
-- Browser headless launch timed out; no claim is made that real browser, signed-in E2E, visual, or mobile acceptance tests passed.
-
-## Remaining findings and release blockers
-
-- Security advisor still reports 35 authenticated-callable `SECURITY DEFINER` functions. They must be individually reviewed for internal authorization before any further grant changes; do not revoke them indiscriminately.
-- Supabase leaked-password protection is not enabled.
-- Performance advisor still reports 52 auth RLS init-plan warnings and 62 multiple-permissive-policy warnings. These require controlled policy optimization and regression tests.
-- Advisor also reports 60 currently unused indexes (INFO); do not drop them solely because workload has not used them yet.
-- Real payments are not processed. The portal writes pending requests only; no payment gateway or verified bank-transfer reconciliation is connected. Do not accept money through this flow yet.
-- Business portal plan prices (99/249/499 GEL) and 15% service-fee estimate are provisional in the README. All three plans currently have `challenge_limit = 0`; no subscriptions exist. Approve final prices and entitlements before sales.
-- Business campaign event helper is a separate asset and is not wired into the main website. End-user campaign discovery, participation/submission and end-to-end analytics are incomplete.
-- NEXORA exists only as separate local demos and specification. No QULUP account integration, server-backed game session or ledger connection exists.
-- Hosting/provider, canonical domain, DNS, SSL and Auth redirect configuration were not verified; no deployment was performed.
-- Mobile styling was intentionally left unchanged pending desktop acceptance.
-- GitHub `main` remains stale; latest V82+ website source is preserved in the release package but not pushed to `main`.
+1. Real payment processing or verified bank-transfer reconciliation is not connected; the business portal currently creates pending requests only.
+2. NEXORA remains a separate local demo/prototype and spec; its browser-local credits are not connected to QULUP auth or the points ledger. Server-authoritative game sessions and atomic/idempotent ledger settlement are required before enabling it.
+3. Canonical domain, DNS, SSL, hosting and Supabase Auth redirect settings were not verified or deployed.
+4. Plan prices (99/249/499 GEL), `challenge_limit=0` and 15% fee estimate require commercial approval before selling subscriptions.
+5. Full visual QA, sign-in/role-based testing, proof upload with real user accounts, and production payment end-to-end tests remain outstanding.
+6. The full V82+ Release Candidate is not yet synchronized to GitHub `main`; it is supplied as a separate file in the release package.
 
 ## Release decision
 
-**NO-GO for public full launch.** The database hardening is live. Before release, complete: source sync + browser acceptance; business campaign/event flow; selected payment provider and verified settlement; NEXORA server-authoritative integration; plan/pricing approval; Auth password protection; remaining function/RLS review; and hosting/domain deployment.
+**NO-GO for public Full Launch.** Database protections and the campaign submission flow are improved and transaction-tested. Do not accept payments or award NEXORA points until the remaining server/payment/hosting and acceptance-test work is complete.
 
-## GitHub work
+## GitHub
 
-- Branch: `codex/qulup-release-hardening-2026-11-26`
-- Draft PR: https://github.com/maisuradzee/qulani-/pull/1
-- PR adds the release audit and a replay/reference SQL script; it deliberately does not merge or overwrite the older `main/index.html`.
+Draft PR #1: https://github.com/maisuradzee/qulani-/pull/1
+Branch: `codex/qulup-release-hardening-2026-11-26`
