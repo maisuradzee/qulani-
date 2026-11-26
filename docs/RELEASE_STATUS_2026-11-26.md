@@ -10,8 +10,8 @@
 - GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The latest 8.47 MB Release Candidate is included in the downloadable v2 release package. GitHub PR #1 contains SQL and documentation, not the full large HTML file.
 - The latest source already had active partner-campaign listing, photo/text submission, private proof storage, admin review and personal-submission fetch logic.
 - The Release Candidate adds a submit action for both task and branded-challenge campaigns, participant-limit display, visible personal campaign-submission history, cleanup of unlinked proof uploads after failed submission, and authenticated-only campaign view/start event tracking.
-- V89 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file. Password-reset callbacks (`PASSWORD_RECOVERY`) now open a dedicated recovery mode so users can set a new password without the old password; normal password changes still require current-password verification.
-- V89 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 412 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found. Isolated auth-flow tests passed for the `PASSWORD_RECOVERY` callback, password recovery without the old password, and normal password change with current-password verification.
+- V90 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file. Password-reset callbacks (`PASSWORD_RECOVERY`) now open a dedicated recovery mode so users can set a new password without the old password; normal password changes still require current-password verification. New registrations and new/updated passwords require at least 8 characters; sign-in for existing accounts still accepts the previous 6-character minimum.
+- V90 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 412 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found. Isolated auth-flow tests passed for the `PASSWORD_RECOVERY` callback, password recovery without the old password, normal password change with current-password verification, and the 8-character new-password guards.
 - Mobile-specific styling is unchanged.
 
 ## Supabase work completed
@@ -47,7 +47,7 @@ Applied migrations:
 - Frontend runtime smoke tests: history rendering, XSS escaping, authenticated tracking, anonymous tracking suppression and submission insert passed.
 - Database transaction tests: automatic submit-event generation passed; duplicate live submissions were rejected; participant-limit overrun was rejected; non-admin review and client-forged submit event were rejected. All test transactions were rolled back.
 - Live data after tests: 1 submission, 10 campaign events, 2 campaigns, 2 business profiles — unchanged.
-- Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains disabled.
+- Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains unavailable because the Supabase organization is on the Free plan; Supabase makes this control available on Pro and above.
 - Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 55 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
 - Health Advisor: no lints.
 - Exact duplicate policy cleanup: 6 groups / 7 redundant permissive policies removed; one further DELETE rule covered by an identical FOR ALL policy was removed. Public policy count reduced from 154 to 146 with effective access predicates unchanged.
@@ -79,8 +79,8 @@ Applied migrations:
 3. Canonical domain, DNS, SSL, hosting and Supabase Auth redirect settings were not verified or deployed.
 4. Plan prices (99/249/499 GEL), `challenge_limit=0` and 15% fee estimate require commercial approval before selling subscriptions.
 5. Full visual QA, sign-in/role-based testing, proof upload with real user accounts, and production payment end-to-end tests remain outstanding.
-6. The V82+ V89 Release Candidate is not yet synchronized to GitHub `main`; it is available as a separate tested HTML artifact. Synchronize only after browser acceptance.
-7. Review the remaining authenticated-callable SECURITY DEFINER functions individually; do not revoke grants indiscriminately. Enable leaked-password protection and address the remaining RLS/performance findings with regression tests.
+6. The V82+ V90 Release Candidate is not yet synchronized to GitHub `main`; it is available as a separate tested HTML artifact. Synchronize only after browser acceptance.
+7. Review the remaining authenticated-callable SECURITY DEFINER functions individually; do not revoke grants indiscriminately. Leaked-password protection requires a Pro-plan upgrade; do not upgrade without explicit approval. Continue the remaining RLS/performance findings with regression tests.
 
 NEXORA is intentionally deferred until after QULUP is stable. It is not a blocker for launching QULUP without NEXORA.
 
