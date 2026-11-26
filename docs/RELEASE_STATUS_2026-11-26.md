@@ -10,8 +10,8 @@
 - GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The updated 8.47 MB Release Candidate is included in the downloadable v2 release package. GitHub PR #1 contains SQL and documentation, not the full large HTML file.
 - The latest source already had active partner-campaign listing, photo/text submission, private proof storage, admin review and personal-submission fetch logic.
 - The Release Candidate adds a submit action for both task and branded-challenge campaigns, participant-limit display, visible personal campaign-submission history, cleanup of unlinked proof uploads after failed submission, and authenticated-only campaign view/start event tracking.
-- V88 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file.
-- V88 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 411 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found.
+- V89 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file. Password-reset callbacks (`PASSWORD_RECOVERY`) now open a dedicated recovery mode so users can set a new password without the old password; normal password changes still require current-password verification.
+- V89 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 412 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found. Isolated auth-flow tests passed for both password recovery (no current password) and normal password change (current password checked).
 - Mobile-specific styling is unchanged.
 
 ## Supabase work completed
@@ -56,7 +56,7 @@ Applied migrations:
 - SECURITY DEFINER hardening: 20 additional functions now use an empty `search_path`; their application relations were verified as schema-qualified. The remaining internal event-trigger function is restricted to `pg_catalog`.
 - SECURITY DEFINER privilege check: 0 of 50 functions are executable by `anon`; 35 remain intentionally executable by `authenticated` for app RPC/RLS helpers and remain individually reviewable.
 - Edge Functions deployed: 0.
-- Headless Chromium did not complete page loading within the test window; no visual/browser E2E pass is claimed.
+- Headless Chromium did not complete page loading within the test window in repeated attempts; no visual/browser E2E pass is claimed.
 
 ## Current live data snapshot
 
@@ -79,7 +79,7 @@ Applied migrations:
 3. Canonical domain, DNS, SSL, hosting and Supabase Auth redirect settings were not verified or deployed.
 4. Plan prices (99/249/499 GEL), `challenge_limit=0` and 15% fee estimate require commercial approval before selling subscriptions.
 5. Full visual QA, sign-in/role-based testing, proof upload with real user accounts, and production payment end-to-end tests remain outstanding.
-6. The V82+ V88 Release Candidate is not yet synchronized to GitHub `main`; it is available as a separate tested HTML artifact. Synchronize only after browser acceptance.
+6. The V82+ V89 Release Candidate is not yet synchronized to GitHub `main`; it is available as a separate tested HTML artifact. Synchronize only after browser acceptance.
 7. Review the remaining authenticated-callable SECURITY DEFINER functions individually; do not revoke grants indiscriminately. Enable leaked-password protection and address the remaining RLS/performance findings with regression tests.
 
 NEXORA is intentionally deferred until after QULUP is stable. It is not a blocker for launching QULUP without NEXORA.
