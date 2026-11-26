@@ -121,3 +121,12 @@ Branch: `codex/qulup-release-hardening-2026-11-26`
 - Recommended Workers Builds settings for the preview package: repository root as Root directory; empty Build command (there is no compile step for the standalone HTML file); Preview command `npx wrangler preview`; Deploy command `npx wrangler deploy`. Keep the candidate on a non-production branch and do not merge/promote until preview acceptance is complete.
 - Cloudflare's current documentation states that Workers Builds uses a separate Preview command (default `npx wrangler preview`) for preview builds and a Deploy command (default `npx wrangler deploy`) for deployment; it also requires the Wrangler `name` to match the existing Worker name. Static assets are configured using `assets.directory` in Wrangler. References: https://developers.cloudflare.com/workers/ci-cd/builds/configuration/ and https://developers.cloudflare.com/workers/static-assets/binding/
 - The ZIP passed integrity and configuration checks locally. It has not yet been uploaded to GitHub, run by Cloudflare, or accepted in a browser. No production Worker configuration or deployment was changed.
+
+
+## Preview package correction (26 November 2026, follow-up)
+
+- The first ZIP revision contained both a nested package copy and root-level files. It was replaced with a clean archive containing only root-level `package.json`, `wrangler.jsonc`, `README.md`, `SHA256SUMS.txt`, and `public/index.html`.
+- The corrected `wrangler.jsonc` now includes the required empty `previews: {}` block. Cloudflare's current Worker Previews documentation states that a Wrangler configuration file needs a `previews` block; static assets remain top-level and are uploaded from the branch being previewed.
+- Corrected ZIP SHA-256: `70d56d054b5f20a0d84285768d4bad703335817619f30477124a144ffd15e10e`. Archive integrity test passed; it contains exactly six entries and the V90 HTML payload is 8,472,374 bytes.
+- Wrangler 4.168.0 satisfies the documented Worker Previews minimum (4.135.0). `npx wrangler preview` is the documented Preview command. This configuration remains prepared but not deployed; the Cloudflare Dashboard Preview settings and Preview-safe Supabase bindings still need review.
+- References: https://developers.cloudflare.com/workers/previews/ ; https://developers.cloudflare.com/workers/previews/configuration/ ; https://developers.cloudflare.com/workers/ci-cd/builds/troubleshoot/
