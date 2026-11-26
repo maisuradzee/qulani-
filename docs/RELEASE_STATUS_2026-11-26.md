@@ -102,3 +102,13 @@ Branch: `codex/qulup-release-hardening-2026-11-26`
 - Cloudflare dashboard build logs are behind the authenticated dashboard and are not accessible through the connected GitHub/Supabase integrations. Therefore the exact build error is not yet confirmed. A missing build manifest/configuration is a plausible cause only if the Cloudflare service expects an npm/Wrangler build; do not assume this without the first failing log line.
 - Do not add a speculative build script, deploy V90, or change the Cloudflare production service until its build command, output directory/asset mode, and first failing log line are confirmed.
 - Required next diagnostic: open the newest failed build in Cloudflare Dashboard → Workers & Pages → qulani → Builds and capture the first error plus the configured Build command and Deploy command. Then add the matching minimal config and run a preview-only deployment.
+
+## Confirmed deployment target and current version gap (26 November 2026)
+
+- Project owner supplied the current public Worker address: https://qulani.l-maisuradze385.workers.dev and reports that it currently serves an older QULUP version. This is recorded as an owner-reported observation; the address could not be fetched from the current verification runtime, so the served file/version has not been independently identified.
+- GitHub `main/index.html` and the release-hardening branch `index.html` are still the same old 610,189-byte file (blob SHA `ac633c2ebc578c2ec57644979327adf3c025014b`). The V90 candidate is not in GitHub at this checkpoint.
+- Local V90 artifact: `QULUP_V90_Desktop_Release_Candidate.html`, 8,472,374 bytes, SHA-256 `5491667eb05e6b79fad78c0f1e1f5d99a42422ef1bf21095191f1936eb0db7d8`.
+- Revalidation on 26 November: 12/12 non-empty inline JS blocks pass `node --check`; HTML parser finds 412 IDs with zero duplicates; no Service Role/secret-key literal and no NEXORA reference were found. This is static validation, not a full browser E2E pass.
+- Latest Cloudflare Preview Build failure reported by `cloudflare-workers-and-pages[bot]`: commit `a828e20`, build ID `0fbedcd6-8f06-4384-a76f-699d6d49497f`, timestamp `2026-11-26 13:30:27 UTC`. The authenticated Cloudflare log itself remains inaccessible through the connected integrations, so the first failing line and configured build/deploy commands are still unknown.
+- No changes have been made to the live Worker or GitHub `main`. The live endpoint must remain untouched until V90 is committed to a preview branch, Cloudflare configuration is matched to its actual build log, and preview acceptance passes.
+
