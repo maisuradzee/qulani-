@@ -86,7 +86,7 @@ NEXORA is intentionally deferred until after QULUP is stable. It is not a blocke
 
 ## Release decision
 
-**NO-GO for public Full Commercial Launch at this checkpoint.** Database protections and campaign submission are improved and transaction-tested, and the V89 frontend fixes pass static/runtime smoke tests. Do not activate paid business packages until payment reconciliation, hosting/Auth configuration, remaining security review and signed-in browser acceptance are complete. NEXORA remains out of scope for this release.
+**NO-GO for public Full Commercial Launch at this checkpoint.** Database protections and campaign submission are improved and transaction-tested, and the V90 frontend fixes pass static/runtime smoke tests. Do not activate paid business packages until payment reconciliation, hosting/Auth configuration, remaining security review and signed-in browser acceptance are complete. NEXORA remains out of scope for this release.
 
 ## GitHub
 
