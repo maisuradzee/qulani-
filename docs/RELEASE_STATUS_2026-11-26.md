@@ -48,11 +48,13 @@ Applied migrations:
 - Database transaction tests: automatic submit-event generation passed; duplicate live submissions were rejected; participant-limit overrun was rejected; non-admin review and client-forged submit event were rejected. All test transactions were rolled back.
 - Live data after tests: 1 submission, 10 campaign events, 2 campaigns, 2 business profiles — unchanged.
 - Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains disabled.
-- Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 56 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
+- Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 55 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
 - Health Advisor: no lints.
-- Exact duplicate policy cleanup: 6 groups / 7 redundant permissive policies removed; public policy count reduced from 154 to 147 with effective access predicates unchanged.
+- Exact duplicate policy cleanup: 6 groups / 7 redundant permissive policies removed; one further DELETE rule covered by an identical FOR ALL policy was removed. Public policy count reduced from 154 to 146 with effective access predicates unchanged.
 - Auth RLS optimization: 47 policies now wrap request-constant `auth.uid()` values in scalar subqueries; Advisor reports 0 auth RLS init-plan warnings.
 - The migration history includes a no-op entry `20261126092459 qulup_rls_auth_uid_initplan_optimization_2026_11_26` (empty query, no schema change), followed by the actual 47-policy optimization migration `20261126092512 qulup_rls_auth_uid_initplan_optimization_apply_2026_11_26`.
+- SECURITY DEFINER hardening: 20 additional functions now use an empty `search_path`; their application relations were verified as schema-qualified. The remaining internal event-trigger function is restricted to `pg_catalog`.
+- SECURITY DEFINER privilege check: 0 of 50 functions are executable by `anon`; 35 remain intentionally executable by `authenticated` for app RPC/RLS helpers and remain individually reviewable.
 - Edge Functions deployed: 0.
 - Headless Chromium did not complete page loading within the test window; no visual/browser E2E pass is claimed.
 
@@ -73,7 +75,7 @@ Applied migrations:
 ## Remaining production blockers
 
 1. Real payment processing or verified bank-transfer reconciliation is not connected; the business portal currently creates pending requests only.
-2. NEXORA remains a separate local demo/prototype and spec; its browser-local credits are not connected to QULUP auth or the points ledger. Server-authoritative game sessions and atomic/idempotent ledger settlement are required before enabling it.
+2. NEXORA is explicitly deferred and is not part of the QULUP launch scope.
 3. Canonical domain, DNS, SSL, hosting and Supabase Auth redirect settings were not verified or deployed.
 4. Plan prices (99/249/499 GEL), `challenge_limit=0` and 15% fee estimate require commercial approval before selling subscriptions.
 5. Full visual QA, sign-in/role-based testing, proof upload with real user accounts, and production payment end-to-end tests remain outstanding.
