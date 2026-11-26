@@ -106,9 +106,18 @@ Branch: `codex/qulup-release-hardening-2026-11-26`
 ## Confirmed deployment target and current version gap (26 November 2026)
 
 - Project owner supplied the current public Worker address: https://qulani.l-maisuradze385.workers.dev and reports that it currently serves an older QULUP version. This is recorded as an owner-reported observation; the address could not be fetched from the current verification runtime, so the served file/version has not been independently identified.
-- GitHub `main/index.html` and the release-hardening branch `index.html` are still the same old 610,189-byte file (blob SHA `ac633c2ebc578c2ec57644979327adf3c025014b`). The V90 candidate is not in GitHub at this checkpoint.
+- GitHub `main/index.html` and the release-hardening branch `index.html` are still the same old 661,043-byte file (GitHub API size) (blob SHA `ac633c2ebc578c2ec57644979327adf3c025014b`). The V90 candidate is not in GitHub at this checkpoint.
 - Local V90 artifact: `QULUP_V90_Desktop_Release_Candidate.html`, 8,472,374 bytes, SHA-256 `5491667eb05e6b79fad78c0f1e1f5d99a42422ef1bf21095191f1936eb0db7d8`.
 - Revalidation on 26 November: 12/12 non-empty inline JS blocks pass `node --check`; HTML parser finds 412 IDs with zero duplicates; no Service Role/secret-key literal and no NEXORA reference were found. This is static validation, not a full browser E2E pass.
 - Latest Cloudflare Preview Build failure reported by `cloudflare-workers-and-pages[bot]`: commit `a828e20`, build ID `0fbedcd6-8f06-4384-a76f-699d6d49497f`, timestamp `2026-11-26 13:30:27 UTC`. The authenticated Cloudflare log itself remains inaccessible through the connected integrations, so the first failing line and configured build/deploy commands are still unknown.
 - No changes have been made to the live Worker or GitHub `main`. The live endpoint must remain untouched until V90 is committed to a preview branch, Cloudflare configuration is matched to its actual build log, and preview acceptance passes.
 
+
+
+## Cloudflare V90 preview package prepared (26 November 2026)
+
+- A local preview package is prepared as `QULUP_V90_Cloudflare_Preview_Package.zip`. It contains `public/index.html` (V90), `wrangler.jsonc`, a pinned Wrangler `4.168.0` package manifest, a deployment README and a SHA-256 manifest.
+- Proposed static-assets config uses Worker name `qulani` and asset directory `./public`. The Worker name matches the service slug in the Cloudflare build URL. This is a prepared configuration, not a confirmed fix for the existing failed build.
+- Recommended Workers Builds settings for the preview package: repository root as Root directory; empty Build command (there is no compile step for the standalone HTML file); Preview command `npx wrangler preview`; Deploy command `npx wrangler deploy`. Keep the candidate on a non-production branch and do not merge/promote until preview acceptance is complete.
+- Cloudflare's current documentation states that Workers Builds uses a separate Preview command (default `npx wrangler preview`) for preview builds and a Deploy command (default `npx wrangler deploy`) for deployment; it also requires the Wrangler `name` to match the existing Worker name. Static assets are configured using `assets.directory` in Wrangler. References: https://developers.cloudflare.com/workers/ci-cd/builds/configuration/ and https://developers.cloudflare.com/workers/static-assets/binding/
+- The ZIP passed integrity and configuration checks locally. It has not yet been uploaded to GitHub, run by Cloudflare, or accepted in a browser. No production Worker configuration or deployment was changed.
