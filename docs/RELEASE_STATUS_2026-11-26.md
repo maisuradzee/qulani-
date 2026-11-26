@@ -92,3 +92,13 @@ NEXORA is intentionally deferred until after QULUP is stable. It is not a blocke
 
 Draft PR #1: https://github.com/maisuradzee/qulani-/pull/1
 Branch: `codex/qulup-release-hardening-2026-11-26`
+
+
+## Cloudflare deployment diagnosis (26 November 2026)
+
+- GitHub PR #1 has repeated Cloudflare Preview Build failures (the PR bot listed failed builds for commits `683260d`, `65a3d2e`, `a148b4d`, `716111f`, `c7261ac`, and `276c4ab`).
+- The current `main` root contains only `index.html` (~661 KB), `Qulani_V68_partner_rls_fix-1.html` (~628 KB), `test.html` (~628 KB), and a 43-byte README. It has no `package.json`, lockfile, `wrangler.toml`, `wrangler.jsonc`, or build script.
+- PR #1 changes only documentation and SQL files; it does not change the root HTML entrypoint or add V90 to GitHub. The V90 candidate is an 8,472,374-byte local artifact, separately validated (12 inline JS blocks pass `node --check`, 412 unique IDs).
+- Cloudflare dashboard build logs are behind the authenticated dashboard and are not accessible through the connected GitHub/Supabase integrations. Therefore the exact build error is not yet confirmed. A missing build manifest/configuration is a plausible cause only if the Cloudflare service expects an npm/Wrangler build; do not assume this without the first failing log line.
+- Do not add a speculative build script, deploy V90, or change the Cloudflare production service until its build command, output directory/asset mode, and first failing log line are confirmed.
+- Required next diagnostic: open the newest failed build in Cloudflare Dashboard → Workers & Pages → qulani → Builds and capture the first error plus the configured Build command and Deploy command. Then add the matching minimal config and run a preview-only deployment.
