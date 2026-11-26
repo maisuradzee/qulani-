@@ -2,7 +2,7 @@
 
 ## Executive status
 
-**Database hardening is applied. A tested Release Candidate has been prepared for the website. Full Production launch remains NO-GO** until payment, NEXORA, hosting/domain and real browser acceptance work is complete.
+**Database hardening is applied and the V82+ desktop Release Candidate has been updated. Full commercial Production launch remains NO-GO** until payment, hosting/domain, security review and real browser acceptance work is complete. NEXORA is explicitly deferred and is not part of the QULUP launch scope.
 
 ## Source and frontend changes
 
@@ -10,6 +10,8 @@
 - GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The updated 8.47 MB Release Candidate is included in the downloadable v2 release package. GitHub PR #1 contains SQL and documentation, not the full large HTML file.
 - The latest source already had active partner-campaign listing, photo/text submission, private proof storage, admin review and personal-submission fetch logic.
 - The Release Candidate adds a submit action for both task and branded-challenge campaigns, participant-limit display, visible personal campaign-submission history, cleanup of unlinked proof uploads after failed submission, and authenticated-only campaign view/start event tracking.
+- V88 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file.
+- V88 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 411 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found.
 - Mobile-specific styling is unchanged.
 
 ## Supabase work completed
@@ -72,11 +74,14 @@ Applied migrations:
 3. Canonical domain, DNS, SSL, hosting and Supabase Auth redirect settings were not verified or deployed.
 4. Plan prices (99/249/499 GEL), `challenge_limit=0` and 15% fee estimate require commercial approval before selling subscriptions.
 5. Full visual QA, sign-in/role-based testing, proof upload with real user accounts, and production payment end-to-end tests remain outstanding.
-6. The full V82+ Release Candidate is not yet synchronized to GitHub `main`; it is included separately in the downloadable release package.
+6. The V82+ V88 Release Candidate is not yet synchronized to GitHub `main`; it is available as a separate tested HTML artifact. Synchronize only after browser acceptance.
+7. Review the remaining authenticated-callable SECURITY DEFINER functions individually; do not revoke grants indiscriminately. Enable leaked-password protection and address the remaining RLS/performance findings with regression tests.
+
+NEXORA is intentionally deferred until after QULUP is stable. It is not a blocker for launching QULUP without NEXORA.
 
 ## Release decision
 
-**NO-GO for public Full Launch.** Database protections and the campaign submission flow are improved and transaction-tested. Do not accept payments or award NEXORA points until the remaining server/payment/hosting and acceptance-test work is complete.
+**NO-GO for public Full Commercial Launch at this checkpoint.** Database protections and campaign submission are improved and transaction-tested, and the V88 frontend fixes pass static/runtime smoke tests. Do not activate paid business packages until payment reconciliation, hosting/Auth configuration, remaining security review and signed-in browser acceptance are complete. NEXORA remains out of scope for this release.
 
 ## GitHub
 
