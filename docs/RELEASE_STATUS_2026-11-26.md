@@ -7,11 +7,11 @@
 ## Source and frontend changes
 
 - The latest Library source snapshot is `index(1).html` (25 November 2026, about 8.47 MB), containing the V82 desktop baseline and refinements through V87.
-- GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The updated 8.47 MB Release Candidate is included in the downloadable v2 release package. GitHub PR #1 contains SQL and documentation, not the full large HTML file.
+- GitHub `main/index.html` is an older ~610 KB version; it has not been overwritten. The latest 8.47 MB Release Candidate is included in the downloadable v2 release package. GitHub PR #1 contains SQL and documentation, not the full large HTML file.
 - The latest source already had active partner-campaign listing, photo/text submission, private proof storage, admin review and personal-submission fetch logic.
 - The Release Candidate adds a submit action for both task and branded-challenge campaigns, participant-limit display, visible personal campaign-submission history, cleanup of unlinked proof uploads after failed submission, and authenticated-only campaign view/start event tracking.
 - V89 frontend hardening: campaign view/start analytics now skip anonymous sessions; the client no longer attempts a duplicate `submit` event (the database trigger is authoritative); failed submissions remove only the newly uploaded, still-unlinked proof file. Password-reset callbacks (`PASSWORD_RECOVERY`) now open a dedicated recovery mode so users can set a new password without the old password; normal password changes still require current-password verification.
-- V89 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 412 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found. Isolated auth-flow tests passed for both password recovery (no current password) and normal password change (current password checked).
+- V89 verification: 12/12 inline JavaScript blocks pass `node --check`; the parsed document contains 412 IDs with zero duplicates; no Service Role/secret key literal and no NEXORA reference were found. Isolated auth-flow tests passed for the `PASSWORD_RECOVERY` callback, password recovery without the old password, and normal password change with current-password verification.
 - Mobile-specific styling is unchanged.
 
 ## Supabase work completed
@@ -86,7 +86,7 @@ NEXORA is intentionally deferred until after QULUP is stable. It is not a blocke
 
 ## Release decision
 
-**NO-GO for public Full Commercial Launch at this checkpoint.** Database protections and campaign submission are improved and transaction-tested, and the V88 frontend fixes pass static/runtime smoke tests. Do not activate paid business packages until payment reconciliation, hosting/Auth configuration, remaining security review and signed-in browser acceptance are complete. NEXORA remains out of scope for this release.
+**NO-GO for public Full Commercial Launch at this checkpoint.** Database protections and campaign submission are improved and transaction-tested, and the V89 frontend fixes pass static/runtime smoke tests. Do not activate paid business packages until payment reconciliation, hosting/Auth configuration, remaining security review and signed-in browser acceptance are complete. NEXORA remains out of scope for this release.
 
 ## GitHub
 
