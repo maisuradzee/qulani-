@@ -48,7 +48,7 @@ Applied migrations:
 - Database transaction tests: automatic submit-event generation passed; duplicate live submissions were rejected; participant-limit overrun was rejected; non-admin review and client-forged submit event were rejected. All test transactions were rolled back.
 - Live data after tests: 1 submission, 10 campaign events, 2 campaigns, 2 business profiles — unchanged.
 - Security Advisor: 3 RLS-enabled game tables have no direct policies (kept server-RPC-only); 35 authenticated-callable SECURITY DEFINER functions remain for object-by-object review; leaked-password protection remains unavailable because the Supabase organization is on the Free plan; Supabase makes this control available on Pro and above.
-- Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 55 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
+- Performance Advisor after policy cleanup: 0 auth RLS init-plan warnings (47 policies optimized), 54 multiple-permissive-policy warnings remain, and 59 unused-index informational notices remain.
 - Health Advisor: no lints.
 - Exact duplicate policy cleanup: 6 groups / 7 redundant permissive policies removed; one further DELETE rule covered by an identical FOR ALL policy was removed. Public policy count reduced from 154 to 146 with effective access predicates unchanged.
 - Auth RLS optimization: 47 policies now wrap request-constant `auth.uid()` values in scalar subqueries; Advisor reports 0 auth RLS init-plan warnings.
@@ -130,3 +130,12 @@ Branch: `codex/qulup-release-hardening-2026-11-26`
 - Corrected ZIP SHA-256: `70d56d054b5f20a0d84285768d4bad703335817619f30477124a144ffd15e10e`. Archive integrity test passed; it contains exactly six entries and the V90 HTML payload is 8,472,374 bytes.
 - Wrangler 4.168.0 satisfies the documented Worker Previews minimum (4.135.0). `npx wrangler preview` is the documented Preview command. This configuration remains prepared but not deployed; the Cloudflare Dashboard Preview settings and Preview-safe Supabase bindings still need review.
 - References: https://developers.cloudflare.com/workers/previews/ ; https://developers.cloudflare.com/workers/previews/configuration/ ; https://developers.cloudflare.com/workers/ci-cd/builds/troubleshoot/
+
+
+## Additional Supabase security review and duplicate policy cleanup (26 November 2026)
+
+- Re-reviewed all 35 public SECURITY DEFINER functions executable by `authenticated`. In the inspected definitions, each function either binds the operation to `auth.uid()` / the caller's own session or enforces an administrator, moderator or approved-partner membership check. No `raw_user_meta_data` authorization usage or deprecated `auth.role()` calls were found. This is a source review, not an exhaustive penetration test; the Advisor's 35 warnings remain visible and must not be mass-revoked.
+- Found one exact duplicate permissive policy on `public.admin_users`: two authenticated SELECT policies had the same `user_id = (select auth.uid())` predicate. Removed `Users can read own admin status`, retaining `Users can view their own admin membership` with the identical predicate.
+- Applied migration `20261126143623_qulup_admin_users_duplicate_policy_cleanup_20261126`; confirmed exactly one matching SELECT policy remains and zero exact duplicate permissive-policy groups remain.
+- Performance Advisor multiple-permissive-policy count decreased from 55 to 54. The remaining 54 findings are overlapping/parallel policies, not proven duplicates, and need individual semantic review. Unused-index INFO findings remain 59.
+- Latest read-only business data snapshot remains 2 business profiles, 2 campaigns, 0 subscriptions, 1 payment request, 10 campaign events and 1 submission.
